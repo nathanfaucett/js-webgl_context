@@ -81,6 +81,11 @@ function WebGLContext(options) {
 }
 EventEmitter.extend(WebGLContext);
 
+WebGLContext.prototype.setAttributes = function(options) {
+    getAttributes(this, options);
+    return this;
+};
+
 WebGLContext.prototype.setCanvas = function(canvas) {
     var _this = this,
         thisCanvas = this.canvas;
