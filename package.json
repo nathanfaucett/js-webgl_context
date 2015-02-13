@@ -1,0 +1,39 @@
+{
+  "name": "webgl_context",
+  "version": "0.0.1",
+  "description": "WebGLContext for the browser",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nathanfaucett/webgl_context.git"
+  },
+  "main": "src/index.js",
+  "keywords": [
+    "webgl_context",
+    "webgl_context.js"
+  ],
+  "author": "Nathan Faucett",
+  "license": "BSD-2-Clause",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-jsbeautifier": "^0.2.7"
+  },
+  "dependencies": {
+    "color": "nathanfaucett/color",
+    "reverse": "nathanfaucett/reverse",
+    "environment": "nathanfaucett/environment",
+    "event_emitter": "nathanfaucett/event_emitter",
+    "event_listener": "nathanfaucett/event_listener",
+    "fast_hash": "git://github.com/nathanfaucett/fast_hash",
+    "inherits": "nathanfaucett/inherits",
+    "is_array": "nathanfaucett/is_array",
+    "mat2": "nathanfaucett/mat2",
+    "mat3": "nathanfaucett/mat3",
+    "mat4": "nathanfaucett/mat4",
+    "mathf": "nathanfaucett/mathf",
+    "vec2": "nathanfaucett/vec2",
+    "vec3": "nathanfaucett/vec3",
+    "vec4": "nathanfaucett/vec4"
+  }
+}
