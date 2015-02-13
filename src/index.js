@@ -6,13 +6,15 @@ var mathf = require("mathf"),
     color = require("color"),
 
     enums = require("./enums/index"),
+    WebGLBuffer = require("./webgl_buffer"),
     WebGLTexture = require("./webgl_texture"),
     WebGLProgram = require("./webgl_program");
 
 
 var NativeUint8Array = typeof(Uint8Array) !== "undefined" ? Uint8Array : Array,
     CullFace = enums.CullFace,
-    Blending = enums.Blending;
+    Blending = enums.Blending,
+    Depth = enums.Depth;
 
 
 module.exports = WebGLContext;
@@ -60,7 +62,8 @@ function WebGLContext(options) {
     this.__blendingDisabled = null;
     this.__cullFace = null;
     this.__cullFaceDisabled = null;
-    this.__depthTest = null;
+    this.__depthFunc = null;
+    this.__depthTestDisabled = null;
     this.__depthWrite = null;
     this.__lineWidth = null;
 
@@ -69,6 +72,9 @@ function WebGLContext(options) {
 
     this.__textureIndex = null;
     this.__activeTexture = null;
+
+    this.__arrayBuffer = null;
+    this.__elementArrayBuffer = null;
 
     this.__handlerContextLost = null;
     this.__handlerContextRestored = null;
@@ -137,7 +143,8 @@ WebGLContext.prototype.clearGL = function() {
     this.__blendingDisabled = null;
     this.__cullFace = null;
     this.__cullFaceDisabled = null;
-    this.__depthTest = null;
+    this.__depthFunc = null;
+    this.__depthTestDisabled = null;
     this.__depthWrite = null;
     this.__lineWidth = null;
 
@@ -146,6 +153,9 @@ WebGLContext.prototype.clearGL = function() {
 
     this.__textureIndex = null;
     this.__activeTexture = null;
+
+    this.__arrayBuffer = null;
+    this.__elementArrayBuffer = null;
 
     return this;
 };
@@ -160,10 +170,11 @@ WebGLContext.prototype.resetGL = function() {
     this.__clearAlpha = null;
 
     this.__blending = null;
-    this.__blendingDisabled = null;
+    this.__blendingDisabled = true;
     this.__cullFace = null;
-    this.__cullFaceDisabled = null;
-    this.__depthTest = null;
+    this.__cullFaceDisabled = true;
+    this.__depthFunc = null;
+    this.__depthTestDisabled = true;
     this.__depthWrite = null;
     this.__lineWidth = null;
 
@@ -173,11 +184,14 @@ WebGLContext.prototype.resetGL = function() {
     this.__textureIndex = null;
     this.__activeTexture = null;
 
+    this.__arrayBuffer = null;
+    this.__elementArrayBuffer = null;
+
     this.disableAttributes();
     this.setViewport(0, 0, 1, 1);
-    this.setDepthTest(false);
     this.setDepthWrite(false);
     this.setLineWidth(1);
+    this.setDepthFunc(Depth.Less);
     this.setCullFace(CullFace.Back);
     this.setBlending(Blending.Default);
     this.setClearColor(color.set(this.__clearColor, 0, 0, 0), 1);
@@ -214,6 +228,7 @@ WebGLContext.prototype.setProgram = function(program, force) {
         this.__programForce = true;
 
         if (program) {
+            this.disableAttributes();
             this.gl.useProgram(program.glProgram);
         } else {
             this.gl.useProgram(null);
@@ -247,12 +262,40 @@ WebGLContext.prototype.setTexture = function(location, texture, force) {
     return this;
 };
 
+WebGLContext.prototype.setArrayBuffer = function(location, buffer, itemSize, type, offset) {
+    var gl = this.gl;
+
+    if (this.__arrayBuffer !== buffer) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer.glBuffer);
+        this.__arrayBuffer = buffer;
+    }
+    this.enableAttribute(location);
+    gl.vertexAttribPointer(location, itemSize, type, gl.FALSE, buffer.stride, offset);
+
+    return this;
+};
+
+WebGLContext.prototype.setElementArrayBuffer = function(buffer) {
+    var gl = this.gl;
+
+    if (this.__elementArrayBuffer !== buffer) {
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.glBuffer);
+        this.__elementArrayBuffer = buffer;
+    }
+
+    return this;
+};
+
 WebGLContext.prototype.createProgram = function() {
     return new WebGLProgram(this);
 };
 
 WebGLContext.prototype.createTexture = function() {
     return new WebGLTexture(this);
+};
+
+WebGLContext.prototype.createBuffer = function() {
+    return new WebGLBuffer(this);
 };
 
 WebGLContext.prototype.deleteProgram = function(program) {
@@ -262,6 +305,11 @@ WebGLContext.prototype.deleteProgram = function(program) {
 
 WebGLContext.prototype.deleteTexture = function(texture) {
     this.gl.deleteTexture(texture.glTexture);
+    return this;
+};
+
+WebGLContext.prototype.deleteBuffer = function(buffer) {
+    this.gl.deleteBuffer(buffer.glBuffer);
     return this;
 };
 
@@ -288,22 +336,6 @@ WebGLContext.prototype.setViewport = function(x, y, width, height) {
     return this;
 };
 
-WebGLContext.prototype.setDepthTest = function(depthTest) {
-    var gl = this.gl;
-
-    if (this.__depthTest !== depthTest) {
-        this.__depthTest = depthTest;
-
-        if (depthTest) {
-            gl.enable(gl.DEPTH_TEST);
-        } else {
-            gl.disable(gl.DEPTH_TEST);
-        }
-    }
-
-    return this;
-};
-
 WebGLContext.prototype.setDepthWrite = function(depthWrite) {
 
     if (this.__depthWrite !== depthWrite) {
@@ -324,30 +356,101 @@ WebGLContext.prototype.setLineWidth = function(width) {
     return this;
 };
 
+WebGLContext.prototype.setDepthFunc = function(depthFunc) {
+    var gl = this.gl;
+
+    if (this.__depthFunc !== depthFunc) {
+        switch (depthFunc) {
+            case Depth.Never:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.NEVER);
+                break;
+            case Depth.Less:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.LESS);
+                break;
+            case Depth.Equal:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.EQUAL);
+                break;
+            case Depth.LessThenOrEqual:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.LEQUAL);
+                break;
+            case Depth.Greater:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.GREATER);
+                break;
+            case Depth.NotEqual:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.NOTEQUAL);
+                break;
+            case Depth.GreaterThanOrEqual:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.GEQUAL);
+                break;
+            case Depth.Always:
+                if (this.__depthTestDisabled) {
+                    gl.enable(gl.DEPTH_TEST);
+                }
+                gl.depthFunc(gl.ALWAYS);
+                break;
+            default:
+                this.__depthTestDisabled = true;
+                this.__depthFunc = Depth.None;
+                gl.disable(gl.DEPTH_TEST);
+                return this;
+        }
+
+        this.__depthTestDisabled = false;
+        this.__depthFunc = depthFunc;
+    }
+
+    return this;
+};
+
 WebGLContext.prototype.setCullFace = function(cullFace) {
     var gl = this.gl;
 
     if (this.__cullFace !== cullFace) {
-        if (cullFace === CullFace.Back) {
-            if (this.__cullFaceDisabled) {
-                gl.enable(gl.CULL_FACE);
-            }
-            gl.cullFace(gl.BACK);
-        } else if (cullFace === CullFace.Front) {
-            if (this.__cullFaceDisabled) {
-                gl.enable(gl.CULL_FACE);
-            }
-            gl.cullFace(gl.FRONT);
-        } else if (cullFace === CullFace.FrontBack) {
-            if (this.__cullFaceDisabled) {
-                gl.enable(gl.CULL_FACE);
-            }
-            gl.cullFace(gl.FRONT_AND_BACK);
-        } else {
-            this.__cullFaceDisabled = true;
-            this.__cullFace = CullFace.None;
-            gl.disable(gl.CULL_FACE);
-            return this;
+        switch (cullFace) {
+            case CullFace.Back:
+                if (this.__cullFaceDisabled) {
+                    gl.enable(gl.CULL_FACE);
+                }
+                gl.cullFace(gl.BACK);
+                break;
+            case CullFace.Front:
+                if (this.__cullFaceDisabled) {
+                    gl.enable(gl.CULL_FACE);
+                }
+                gl.cullFace(gl.FRONT);
+                break;
+            case CullFace.FrontBack:
+                if (this.__cullFaceDisabled) {
+                    gl.enable(gl.CULL_FACE);
+                }
+                gl.cullFace(gl.FRONT_AND_BACK);
+                break;
+            default:
+                this.__cullFaceDisabled = true;
+                this.__cullFace = CullFace.None;
+                gl.disable(gl.CULL_FACE);
+                return this;
         }
 
         this.__cullFaceDisabled = false;
@@ -361,35 +464,40 @@ WebGLContext.prototype.setBlending = function(blending) {
     var gl = this.gl;
 
     if (this.__blending !== blending) {
-        if (blending === Blending.Additive) {
-            if (this.__blendingDisabled) {
-                gl.enable(gl.BLEND);
-            }
-            gl.blendEquation(gl.FUNC_ADD);
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-        } else if (blending === Blending.Subtractive) {
-            if (this.__blendingDisabled) {
-                gl.enable(gl.BLEND);
-            }
-            gl.blendEquation(gl.FUNC_ADD);
-            gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_COLOR);
-        } else if (blending === Blending.Muliply) {
-            if (this.__blendingDisabled) {
-                gl.enable(gl.BLEND);
-            }
-            gl.blendEquation(gl.FUNC_ADD);
-            gl.blendFunc(gl.ZERO, gl.SRC_COLOR);
-        } else if (blending === Blending.Default) {
-            if (this.__blendingDisabled) {
-                gl.enable(gl.BLEND);
-            }
-            gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
-            gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-        } else {
-            gl.disable(gl.BLEND);
-            this.__blendingDisabled = true;
-            this.__blending = Blending.None;
-            return this;
+        switch (blending) {
+            case Blending.Additive:
+                if (this.__blendingDisabled) {
+                    gl.enable(gl.BLEND);
+                }
+                gl.blendEquation(gl.FUNC_ADD);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+                break;
+            case Blending.Subtractive:
+                if (this.__blendingDisabled) {
+                    gl.enable(gl.BLEND);
+                }
+                gl.blendEquation(gl.FUNC_ADD);
+                gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_COLOR);
+                break;
+            case Blending.Muliply:
+                if (this.__blendingDisabled) {
+                    gl.enable(gl.BLEND);
+                }
+                gl.blendEquation(gl.FUNC_ADD);
+                gl.blendFunc(gl.ZERO, gl.SRC_COLOR);
+                break;
+            case Blending.Default:
+                if (this.__blendingDisabled) {
+                    gl.enable(gl.BLEND);
+                }
+                gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+                gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+                break;
+            default:
+                gl.disable(gl.BLEND);
+                this.__blendingDisabled = true;
+                this.__blending = Blending.None;
+                return this;
         }
 
         this.__blendingDisabled = false;
@@ -422,13 +530,13 @@ WebGLContext.prototype.clearCanvas = function(color, depth, stencil) {
     var gl = this.gl,
         bits = 0;
 
-    if (color === undefined || color) {
+    if (color !== false) {
         bits |= gl.COLOR_BUFFER_BIT;
     }
-    if (depth === undefined || depth) {
+    if (depth !== false) {
         bits |= gl.DEPTH_BUFFER_BIT;
     }
-    if (stencil === undefined || stencil) {
+    if (stencil !== false) {
         bits |= gl.STENCIL_BUFFER_BIT;
     }
 

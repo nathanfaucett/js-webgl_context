@@ -6,6 +6,7 @@ var enums = exports;
 
 enums.Blending = require("./blending");
 enums.CullFace = require("./cull_face");
+enums.Depth = require("./depth");
 enums.FilterMode = require("./filter_mode");
 
 enums.gl = require("./gl");

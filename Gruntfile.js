@@ -4,6 +4,8 @@ module.exports = function(grunt) {
         jsbeautifier: {
             files: [
                 "Gruntfile.js",
+                "example/index.js",
+                "example/index.min.js",
                 "src/**/*.js"
             ]
         },
@@ -19,6 +21,7 @@ module.exports = function(grunt) {
             },
             files: [
                 "Gruntfile.js",
+                "example/index.js",
                 "src/**/*.js"
             ]
         }

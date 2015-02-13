@@ -20,7 +20,7 @@ UniformMatrix4fv.prototype.set = function(value, force) {
     var context = this.context;
 
     if (force || context.__programForce || mat4.notEqual(this.value, value)) {
-        context.gl.uniformMatrix3fv(this.location, false, value);
+        context.gl.uniformMatrix4fv(this.location, false, value);
         mat4.copy(this.value, value);
     }
 

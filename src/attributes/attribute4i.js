@@ -9,16 +9,10 @@ function Attribute4i(context, name, location) {
 }
 Attribute.extend(Attribute4i);
 
-Attribute4i.prototype.set = function(value, stride, offset) {
+Attribute4i.prototype.set = function(buffer, offset) {
     var context = this.context,
-        gl = context.gl,
-        location = this.location;
+        gl = context.gl;
 
-    if (location !== -1) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, value);
-        context.enableAttribute(location);
-        gl.vertexAttribPointer(location, 4, gl.FLOAT, gl.FALSE, stride, offset);
-    }
-
+    context.setArrayBuffer(this.location, buffer, 4, gl.FLOAT, offset);
     return this;
 };

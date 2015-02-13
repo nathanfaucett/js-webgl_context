@@ -13,6 +13,9 @@ function WebGLProgram(context) {
 
     this.context = context;
 
+    this.floatPrecision = context.__precision;
+    this.intPrecision = context.__precision;
+
     this.uniforms = new FastHash("name");
     this.attributes = new FastHash("name");
 
@@ -22,6 +25,8 @@ function WebGLProgram(context) {
 
 WebGLProgram.prototype.compile = function(vertex, fragment) {
     var context = this.context,
+        floatPrecision = this.floatPrecision,
+        intPrecision = this.intPrecision,
         uniforms = this.uniforms,
         attributes = this.attributes,
         gl = context.gl,
@@ -33,7 +38,11 @@ WebGLProgram.prototype.compile = function(vertex, fragment) {
         gl.deleteProgram(glProgram);
     }
 
-    glProgram = this.glProgram = createProgram(gl, vertex, fragment);
+    glProgram = this.glProgram = createProgram(
+        gl,
+        prependPrecision(floatPrecision, intPrecision, vertex),
+        prependPrecision(floatPrecision, intPrecision, fragment)
+    );
 
     parseUniforms(gl, context, glProgram, uniforms);
     parseAttributes(gl, context, glProgram, attributes);
@@ -71,6 +80,10 @@ function parseAttributes(gl, context, glProgram, hash) {
         location = gl.getAttribLocation(glProgram, name);
         hash.add(new attributes[glValues[attribute.type]](context, name, location));
     }
+}
+
+function prependPrecision(floatPrecision, intPrecision, shader) {
+    return "precision " + floatPrecision + " float;\nprecision " + intPrecision + " int;\n" + shader;
 }
 
 function createProgram(gl, vertex, fragment) {
