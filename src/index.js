@@ -81,9 +81,9 @@ function WebGLContext() {
 }
 EventEmitter.extend(WebGLContext);
 
-WebGLContext.prototype.setAttributes = function(options) {
+WebGLContext.prototype.setAttributes = function(attributes) {
 
-    getAttributes(this.__attributes, options);
+    getAttributes(this.__attributes, attributes);
 
     if (this.gl) {
         WebGLContext_getGLContext(this);
@@ -92,7 +92,7 @@ WebGLContext.prototype.setAttributes = function(options) {
     return this;
 };
 
-WebGLContext.prototype.setCanvas = function(canvas) {
+WebGLContext.prototype.setCanvas = function(canvas, attributes) {
     var _this = this,
         thisCanvas = this.canvas;
 
@@ -105,6 +105,7 @@ WebGLContext.prototype.setCanvas = function(canvas) {
         }
     }
 
+    getAttributes(this.__attributes, attributes);
     this.canvas = canvas;
 
     this.__handlerContextLost = this.__handlerContextLost || function handlerContextLost(e) {
