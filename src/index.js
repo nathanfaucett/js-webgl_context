@@ -25,14 +25,14 @@ WebGLContext.WebGLTexture = WebGLTexture;
 WebGLContext.WebGLProgram = WebGLProgram;
 
 
-function WebGLContext(options) {
+function WebGLContext() {
 
     EventEmitter.call(this);
 
     this.gl = null;
     this.canvas = null;
 
-    this.__attributes = getAttributes(this, options);
+    this.__attributes = {};
 
     this.__precision = null;
     this.__extensions = {};
@@ -82,7 +82,13 @@ function WebGLContext(options) {
 EventEmitter.extend(WebGLContext);
 
 WebGLContext.prototype.setAttributes = function(options) {
-    getAttributes(this, options);
+
+    getAttributes(this.__attributes, options);
+
+    if (this.gl) {
+        WebGLContext_getGLContext(this);
+    }
+
     return this;
 };
 
@@ -141,7 +147,7 @@ WebGLContext.prototype.clearGL = function() {
     this.__viewportWidth = null;
     this.__viewportHeight = null;
 
-    this.__clearColor = color.create();
+    color.set(this.__clearColor, 0, 0, 0);
     this.__clearAlpha = null;
 
     this.__blending = null;
@@ -650,9 +656,7 @@ WebGLContext.prototype.getExtension = function(name, throwError) {
 };
 
 
-function getAttributes(_this, options) {
-    var attributes = _this.__attributes || (_this.__attributes = {});
-
+function getAttributes(attributes, options) {
     options = options || {};
 
     attributes.alpha = options.alpha != null ? !!options.alpha : true;

@@ -8,8 +8,8 @@ var canvas = document.getElementById("canvas"),
     gl;
 
 
+global.context = context;
 context.setCanvas(canvas);
-
 gl = context.gl;
 context.setViewport(0, 0, canvas.width, canvas.height);
 
@@ -86,8 +86,14 @@ function renderTriangle(ms) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3);
 }
 
+var color = [0, 0, 0];
 (function render(ms) {
 
+    color[0] = Math.sin(ms * 0.00001);
+    color[1] = Math.cos(ms * 0.0001);
+    color[2] = Math.sin(ms * 0.001);
+
+    context.setClearColor(color);
     context.clearCanvas();
 
     renderBox(ms);
