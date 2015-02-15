@@ -13,6 +13,6 @@ Attribute1f.prototype.set = function(buffer, offset) {
     var context = this.context,
         gl = context.gl;
 
-    context.setArrayBuffer(this.location, buffer, 1, gl.FLOAT, offset);
+    context.setAttribPointer(this.location, 1, gl.FLOAT, buffer.stride, offset, context.setArrayBuffer(buffer));
     return this;
 };

@@ -152,11 +152,11 @@ WebGLContext.prototype.clearGL = function() {
     this.__clearAlpha = null;
 
     this.__blending = null;
-    this.__blendingDisabled = null;
+    this.__blendingDisabled = true;
     this.__cullFace = null;
-    this.__cullFaceDisabled = null;
+    this.__cullFaceDisabled = true;
     this.__depthFunc = null;
-    this.__depthTestDisabled = null;
+    this.__depthTestDisabled = true;
     this.__depthWrite = null;
     this.__lineWidth = null;
 
@@ -274,28 +274,39 @@ WebGLContext.prototype.setTexture = function(location, texture, force) {
     return this;
 };
 
-WebGLContext.prototype.setArrayBuffer = function(location, buffer, itemSize, type, offset) {
+WebGLContext.prototype.setArrayBuffer = function(buffer, force) {
     var gl = this.gl;
 
-    if (this.__arrayBuffer !== buffer) {
+    if (this.__arrayBuffer !== buffer || force) {
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer.glBuffer);
         this.__arrayBuffer = buffer;
+        return true;
+    } else {
+        return false;
     }
-    this.enableAttribute(location);
-    gl.vertexAttribPointer(location, itemSize, type, gl.FALSE, buffer.stride, offset);
-
-    return this;
 };
 
-WebGLContext.prototype.setElementArrayBuffer = function(buffer) {
+WebGLContext.prototype.setElementArrayBuffer = function(buffer, force) {
     var gl = this.gl;
 
-    if (this.__elementArrayBuffer !== buffer) {
+    if (this.__elementArrayBuffer !== buffer || force) {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.glBuffer);
         this.__elementArrayBuffer = buffer;
+        return true;
+    } else {
+        return false;
     }
+};
 
-    return this;
+WebGLContext.prototype.setAttribPointer = function(location, itemSize, type, stride, offset, force) {
+    var gl = this.gl;
+
+    if (this.enableAttribute(location) || force) {
+        gl.vertexAttribPointer(location, itemSize, type, gl.FALSE, stride, offset);
+        return true;
+    } else {
+        return false;
+    }
 };
 
 WebGLContext.prototype.createProgram = function() {
@@ -584,9 +595,10 @@ WebGLContext.prototype.enableAttribute = function(attribute) {
     if (enabledAttributes[attribute] === 0) {
         this.gl.enableVertexAttribArray(attribute);
         enabledAttributes[attribute] = 1;
+        return true;
+    } else {
+        return false;
     }
-
-    return this;
 };
 
 WebGLContext.prototype.disableAttribute = function(attribute) {
@@ -595,9 +607,10 @@ WebGLContext.prototype.disableAttribute = function(attribute) {
     if (enabledAttributes[attribute] === 1) {
         this.gl.disableVertexAttribArray(attribute);
         enabledAttributes[attribute] = 0;
+        return true;
+    } else {
+        return false;
     }
-
-    return this;
 };
 
 WebGLContext.prototype.disableAttributes = function() {
