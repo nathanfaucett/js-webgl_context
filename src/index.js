@@ -201,7 +201,7 @@ WebGLContext.prototype.resetGL = function() {
 
     this.disableAttributes();
     this.setViewport(0, 0, 1, 1);
-    this.setDepthWrite(false);
+    this.setDepthWrite(true);
     this.setLineWidth(1);
     this.setDepthFunc(Depth.Less);
     this.setCullFace(CullFace.Back);
