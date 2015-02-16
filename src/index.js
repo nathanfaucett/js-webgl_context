@@ -34,6 +34,8 @@ function WebGLContext() {
 
     this.__attributes = {};
 
+    this.__textures = {};
+
     this.__precision = null;
     this.__extensions = {};
 
@@ -71,6 +73,7 @@ function WebGLContext() {
     this.__programForce = null;
 
     this.__textureIndex = null;
+    this.__activeIndex = null;
     this.__activeTexture = null;
 
     this.__arrayBuffer = null;
@@ -127,6 +130,8 @@ WebGLContext.prototype.clearGL = function() {
 
     this.gl = null;
 
+    this.__textures = {};
+
     this.__precision = null;
     this.__extensions = {};
 
@@ -164,6 +169,7 @@ WebGLContext.prototype.clearGL = function() {
     this.__programForce = null;
 
     this.__textureIndex = null;
+    this.__activeIndex = null;
     this.__activeTexture = null;
 
     this.__arrayBuffer = null;
@@ -173,6 +179,8 @@ WebGLContext.prototype.clearGL = function() {
 };
 
 WebGLContext.prototype.resetGL = function() {
+
+    this.__textures = {};
 
     this.__viewportX = null;
     this.__viewportY = null;
@@ -194,6 +202,7 @@ WebGLContext.prototype.resetGL = function() {
     this.__programForce = null;
 
     this.__textureIndex = null;
+    this.__activeIndex = null;
     this.__activeTexture = null;
 
     this.__arrayBuffer = null;
@@ -240,7 +249,6 @@ WebGLContext.prototype.setProgram = function(program, force) {
         this.__programForce = true;
 
         if (program) {
-            this.disableAttributes();
             this.gl.useProgram(program.glProgram);
         } else {
             this.gl.useProgram(null);
@@ -250,34 +258,44 @@ WebGLContext.prototype.setProgram = function(program, force) {
     }
 
     this.__textureIndex = 0;
+    this.__activeIndex = -1;
 
     return this;
 };
 
 WebGLContext.prototype.setTexture = function(location, texture, force) {
     var gl = this.gl,
-        index = this.__textureIndex++;
+        webglTexture = this.createTexture(texture),
+        index = this.__textureIndex++,
+        needsUpdate = this.__activeIndex !== index;
 
-    if (this.__activeTexture !== texture || force) {
-        this.__activeTexture = texture;
+    this.__activeIndex = index;
 
-        if (texture.isCubeMap) {
-            gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture.glTexture);
+    if (this.__activeTexture !== webglTexture || force) {
+        this.__activeTexture = webglTexture;
+
+        if (webglTexture.isCubeMap) {
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, webglTexture.getGLTexture());
         } else {
-            gl.bindTexture(gl.TEXTURE_2D, texture.glTexture);
+            gl.bindTexture(gl.TEXTURE_2D, webglTexture.getGLTexture());
         }
+
+        if (needsUpdate || this.__programForce || force) {
+            gl.activeTexture(gl.TEXTURE0 + index);
+            gl.uniform1i(location, index);
+        }
+
+        return true;
+    } else {
+        return false;
     }
-
-    gl.activeTexture(gl.TEXTURE0 + index);
-    gl.uniform1i(location, index);
-
-    return this;
 };
 
 WebGLContext.prototype.setArrayBuffer = function(buffer, force) {
     var gl = this.gl;
 
     if (this.__arrayBuffer !== buffer || force) {
+        this.disableAttributes();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer.glBuffer);
         this.__arrayBuffer = buffer;
         return true;
@@ -313,8 +331,9 @@ WebGLContext.prototype.createProgram = function() {
     return new WebGLProgram(this);
 };
 
-WebGLContext.prototype.createTexture = function() {
-    return new WebGLTexture(this);
+WebGLContext.prototype.createTexture = function(texture) {
+    var textures = this.__textures;
+    return textures[texture.__id] || (textures[texture.__id] = new WebGLTexture(this, texture));
 };
 
 WebGLContext.prototype.createBuffer = function() {

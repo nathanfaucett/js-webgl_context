@@ -1,4 +1,5 @@
 var isArray = require("is_array"),
+    mathf = require("mathf"),
     enums = require("./enums/index");
 
 
@@ -9,44 +10,60 @@ var TextureType = enums.TextureType,
 module.exports = WebGLTexture;
 
 
-function WebGLTexture(context) {
+function WebGLTexture(context, texture) {
+    var _this = this;
 
     this.context = context;
+    this.texture = texture
 
     this.isCubeMap = false;
     this.needsCompile = true;
     this.glTexture = null;
+
+    texture.on("update", function() {
+        _this.needsCompile = true;
+    });
 }
 
-WebGLTexture.prototype.compile = function(options) {
-    var context = this.context,
+WebGLTexture.prototype.getGLTexture = function() {
+    if (this.needsCompile === false) {
+        return this.glTexture;
+    } else {
+        return WebGLTexture_getGLTexture(this);
+    }
+};
+
+WebGLTexture_getGLTexture = function(_this) {
+    var texture = _this.texture,
+
+        context = _this.context,
         gl = context.gl,
 
-        glTexture = this.glTexture || (this.glTexture = gl.createTexture()),
+        glTexture = _this.glTexture || (_this.glTexture = gl.createTexture()),
 
-        image = options.data,
+        image = texture.data,
         notNull = image != null,
         isCubeMap = isArray(image),
 
-        width = options.width,
-        height = options.height,
+        width = texture.width,
+        height = texture.height,
         isPOT = mathf.isPowerOfTwo(width) && mathf.isPowerOfTwo(height),
 
-        generateMipmap = options.generateMipmap,
-        flipY = options.flipY,
-        premultiplyAlpha = options.premultiplyAlpha,
-        anisotropy = options.anisotropy,
-        filter = options.filter,
-        format = options.format,
-        wrap = isPOT ? options.wrap : gl.CLAMP_TO_EDGE,
-        textureType = options.type,
+        generateMipmap = texture.generateMipmap,
+        flipY = texture.flipY,
+        premultiplyAlpha = texture.premultiplyAlpha,
+        anisotropy = texture.anisotropy,
+        filter = texture.filter,
+        format = getFormat(gl, texture.format),
+        wrap = isPOT ? getWrap(gl, texture.wrap) : gl.CLAMP_TO_EDGE,
+        textureType = getType(gl, texture.type),
 
         TFA = (anisotropy > 0) && context.getExtension("EXT_texture_filter_anisotropic"),
         TEXTURE_TYPE = isCubeMap ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D,
         minFilter, magFilter, images, i, il;
 
     if (TFA) {
-        anisotropy = clamp(anisotropy, 1, context.__maxAnisotropy);
+        anisotropy = mathf.clamp(anisotropy, 1, context.__maxAnisotropy);
     }
 
     if (notNull) {
@@ -120,10 +137,55 @@ WebGLTexture.prototype.compile = function(options) {
         gl.generateMipmap(TEXTURE_TYPE);
     }
 
-    this.isCubeMap = isCubeMap;
-    this.needsCompile = false;
+    _this.isCubeMap = isCubeMap;
+    _this.needsCompile = false;
 
     gl.bindTexture(TEXTURE_TYPE, null);
 
-    return this;
+    return glTexture;
 };
+
+function getFormat(gl, format) {
+    switch (format) {
+        case gl.RGB:
+            return gl.RGB;
+        case gl.ALPHA:
+            return gl.ALPHA;
+        case gl.LUMINANCE:
+            return gl.LUMINANCE;
+        case gl.LUMINANCE_ALPHA:
+            return gl.LUMINANCE_ALPHA;
+        default:
+            return gl.RGBA;
+    }
+}
+
+function getType(gl, type) {
+    switch (type) {
+        case gl.FLOAT:
+            return gl.FLOAT;
+        case gl.DEPTH_COMPONENT:
+            return gl.DEPTH_COMPONENT;
+        case gl.UNSIGNED_SHORT:
+            return gl.UNSIGNED_SHORT;
+        case gl.UNSIGNED_SHORT_5_6_5:
+            return gl.UNSIGNED_SHORT_5_6_5;
+        case gl.UNSIGNED_SHORT_4_4_4_4:
+            return gl.UNSIGNED_SHORT_4_4_4_4;
+        case gl.UNSIGNED_SHORT_5_5_5_1:
+            return gl.UNSIGNED_SHORT_5_5_5_1;
+        default:
+            return gl.UNSIGNED_BYTE;
+    }
+}
+
+function getWrap(gl, wrap) {
+    switch (wrap) {
+        case gl.REPEAT:
+            return gl.REPEAT;
+        case gl.MIRRORED_REPEAT:
+            return gl.MIRRORED_REPEAT;
+        default:
+            return gl.CLAMP_TO_EDGE;
+    }
+}
