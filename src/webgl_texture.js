@@ -14,7 +14,7 @@ function WebGLTexture(context, texture) {
     var _this = this;
 
     this.context = context;
-    this.texture = texture
+    this.texture = texture;
 
     this.isCubeMap = false;
     this.needsCompile = true;

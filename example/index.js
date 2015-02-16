@@ -27,6 +27,7 @@ function loadImage(src, callback) {
 }
 
 var count = 2;
+
 function check() {
     if (--count === 0) {
         render();
@@ -95,17 +96,14 @@ programB.compile(
 
 var buffer = context.createBuffer();
 buffer.compile(gl.ARRAY_BUFFER, new Float32Array([
-    1, 1, 0, 0, 0,
-    -1, 1, 0, 1, 0,
-    1, -1, 0, 0, 1,
-    -1, -1, 0, 1, 1
+    1, 1, 0, 0, 0, -1, 1, 0, 1, 0,
+    1, -1, 0, 0, 1, -1, -1, 0, 1, 1
 ]), 20, gl.STATIC_DRAW);
 
 var triangleBuffer = context.createBuffer();
 triangleBuffer.compile(gl.ARRAY_BUFFER, new Float32Array([
-    0, 1, 0, 0.5, 1.5,
-    -1, -1, 0, -0.5, 0,
-    1, -1, 0, 1.5, 0,
+    0, 1, 0, 0.5, 1.5, -1, -1, 0, -0.5, 0,
+    1, -1, 0, 1.5, 0
 ]), 20, gl.STATIC_DRAW);
 
 var perspectiveMatrix = mat4.perspective(mat4.create(), 45, canvas.width / canvas.height, 0.1, 1024),
@@ -150,6 +148,7 @@ function renderTriangle(ms) {
 }
 
 var color = [0, 0, 0];
+
 function render(ms) {
 
     color[0] = Math.sin(ms * 0.00001);
@@ -163,4 +162,4 @@ function render(ms) {
     renderTriangle(ms);
 
     requestAnimationFrame(render, canvas);
-};
+}
