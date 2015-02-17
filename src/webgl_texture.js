@@ -33,7 +33,7 @@ WebGLTexture.prototype.getGLTexture = function() {
     }
 };
 
-WebGLTexture_getGLTexture = function(_this) {
+function WebGLTexture_getGLTexture(_this) {
     var texture = _this.texture,
 
         context = _this.context,
@@ -143,7 +143,7 @@ WebGLTexture_getGLTexture = function(_this) {
     gl.bindTexture(TEXTURE_TYPE, null);
 
     return glTexture;
-};
+}
 
 function getFormat(gl, format) {
     switch (format) {
