@@ -657,7 +657,7 @@ WebGLContext.prototype.getExtension = function(name, throwError) {
         i;
 
     if (extension == null) {
-        i = getExtension_prefixes.length;
+        i = getExtension_upperPrefixes.length;
 
         while (i--) {
             if ((extension = gl.getExtension(getExtension_upperPrefixes[i] + "_" + name))) {
@@ -667,7 +667,7 @@ WebGLContext.prototype.getExtension = function(name, throwError) {
         }
     }
     if (extension == null) {
-        i = getExtension_prefixes.length;
+        i = getExtension_lowerPrefixes.length;
 
         while (i--) {
             if ((extension = gl.getExtension(getExtension_lowerPrefixes[i] + name))) {
@@ -693,7 +693,7 @@ function getAttributes(attributes, options) {
     options = options || {};
 
     attributes.alpha = options.alpha != null ? !!options.alpha : true;
-    attributes.antialias = options.antialias != null ? !!opts.antialias : true;
+    attributes.antialias = options.antialias != null ? !!options.antialias : true;
     attributes.depth = options.depth != null ? !!options.depth : true;
     attributes.premultipliedAlpha = options.premultipliedAlpha != null ? !!options.premultipliedAlpha : true;
     attributes.preserveDrawingBuffer = options.preserveDrawingBuffer != null ? !!options.preserveDrawingBuffer : false;
@@ -753,7 +753,7 @@ function getGPUInfo(_this) {
         HIGH_FLOAT = gl.HIGH_FLOAT,
         MEDIUM_FLOAT = gl.MEDIUM_FLOAT,
 
-        EXT_texture_filter_anisotropic = _this.getExtension("EXT_texture_filter_anisotropic"),
+        EXT_tfa = _this.getExtension("EXT_texture_filter_anisotropic"),
 
         vsHighpFloat = gl.getShaderPrecisionFormat(VERTEX_SHADER, HIGH_FLOAT),
         vsMediumpFloat = gl.getShaderPrecisionFormat(VERTEX_SHADER, MEDIUM_FLOAT),
@@ -775,14 +775,16 @@ function getGPUInfo(_this) {
     }
 
     _this.__precision = precision;
-    _this.__maxAnisotropy = EXT_texture_filter_anisotropic ? gl.getParameter(EXT_texture_filter_anisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT) : 1;
+    _this.__maxAnisotropy = EXT_tfa ? gl.getParameter(EXT_tfa.MAX_TEXTURE_MAX_ANISOTROPY_EXT) : 1;
     _this.__maxTextures = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
     _this.__maxVertexTextures = gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
     _this.__maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
     _this.__maxCubeTextureSize = gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
     _this.__maxRenderBufferSize = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
 
-    _this.__maxUniforms = mathf.max(gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS), gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS)) * 4;
+    _this.__maxUniforms = mathf.max(
+        gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS), gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS)
+    ) * 4;
     _this.__maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS) * 4;
     _this.__maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
 
@@ -803,7 +805,7 @@ function getWebGLContext(canvas, attributes) {
     var i = getWebGLContext_webglNames.length,
         gl, key;
 
-    attributes || (attributes = {});
+    attributes = attributes || {};
 
     for (key in getWebGLContext_attuibutes) {
         if (attributes[key] == null) {
