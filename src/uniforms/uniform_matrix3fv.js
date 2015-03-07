@@ -2,6 +2,9 @@ var mat3 = require("mat3"),
     Uniform = require("./uniform");
 
 
+var NativeFloat32Array = typeof(Float32Array) !== "undefined" ? Float32Array : Array;
+
+
 module.exports = UniformMatrix3fv;
 
 
@@ -11,7 +14,7 @@ function UniformMatrix3fv(context, name, location, size) {
         NaN, NaN, NaN,
         NaN, NaN, NaN,
         NaN, NaN, NaN
-    ) : null;
+    ) : new NativeFloat32Array(size * 9);
 }
 Uniform.extend(UniformMatrix3fv);
 

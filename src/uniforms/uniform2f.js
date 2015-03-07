@@ -2,12 +2,15 @@ var vec2 = require("vec2"),
     Uniform = require("./uniform");
 
 
+var NativeFloat32Array = typeof(Float32Array) !== "undefined" ? Float32Array : Array;
+
+
 module.exports = Uniform2f;
 
 
 function Uniform2f(context, name, location, size) {
     Uniform.call(this, context, name, location, size);
-    this.value = size === 1 ? vec2.create(NaN, NaN) : null;
+    this.value = size === 1 ? vec2.create(NaN, NaN) : new NativeFloat32Array(size * 2);
 }
 Uniform.extend(Uniform2f);
 

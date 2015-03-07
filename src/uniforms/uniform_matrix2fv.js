@@ -2,12 +2,15 @@ var mat2 = require("mat2"),
     Uniform = require("./uniform");
 
 
+var NativeFloat32Array = typeof(Float32Array) !== "undefined" ? Float32Array : Array;
+
+
 module.exports = UniformMatrix2fv;
 
 
 function UniformMatrix2fv(context, name, location, size) {
     Uniform.call(this, context, name, location, size);
-    this.value = size === 1 ? mat2.create(NaN, NaN, NaN, NaN) : null;
+    this.value = size === 1 ? mat2.create(NaN, NaN, NaN, NaN) : new NativeFloat32Array(size * 4);
 }
 Uniform.extend(UniformMatrix2fv);
 

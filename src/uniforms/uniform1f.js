@@ -1,11 +1,15 @@
 var Uniform = require("./uniform");
 
 
+var NativeFloat32Array = typeof(Float32Array) !== "undefined" ? Float32Array : Array;
+
+
 module.exports = Uniform1f;
 
 
 function Uniform1f(context, name, location, size) {
     Uniform.call(this, context, name, location, size);
+    this.value = size === 1 ? NaN : new NativeFloat32Array(size);
 }
 Uniform.extend(Uniform1f);
 

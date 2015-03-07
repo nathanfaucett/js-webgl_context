@@ -2,12 +2,15 @@ var vec3 = require("vec3"),
     Uniform = require("./uniform");
 
 
+var NativeInt32Array = typeof(Int32Array) !== "undefined" ? Int32Array : Array;
+
+
 module.exports = Uniform3i;
 
 
 function Uniform3i(context, name, location, size) {
     Uniform.call(this, context, name, location, size);
-    this.value = size === 1 ? vec3.create(NaN, NaN, NaN) : null;
+    this.value = size === 1 ? vec3.create(NaN, NaN, NaN) : new NativeInt32Array(size * 3);
 }
 Uniform.extend(Uniform3i);
 

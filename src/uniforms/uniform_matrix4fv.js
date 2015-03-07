@@ -2,6 +2,9 @@ var mat4 = require("mat4"),
     Uniform = require("./uniform");
 
 
+var NativeFloat32Array = typeof(Float32Array) !== "undefined" ? Float32Array : Array;
+
+
 module.exports = UniformMatrix4fv;
 
 
@@ -12,7 +15,7 @@ function UniformMatrix4fv(context, name, location, size) {
         NaN, NaN, NaN, NaN,
         NaN, NaN, NaN, NaN,
         NaN, NaN, NaN, NaN
-    ) : null;
+    ) : new NativeFloat32Array(size * 16);
 }
 Uniform.extend(UniformMatrix4fv);
 
