@@ -6,6 +6,9 @@ var isArray = require("is_array"),
     attributes = require("./attributes/index");
 
 
+var reUniformName = /[^\[]+/;
+
+
 module.exports = WebGLProgram;
 
 
@@ -61,7 +64,7 @@ function parseUniforms(gl, context, glProgram, hash) {
 
     while (i++ < il) {
         uniform = gl.getActiveUniform(glProgram, i);
-        name = uniform.name;
+        name = reUniformName.exec(uniform.name)[0];
         location = gl.getUniformLocation(glProgram, name);
         hash.add(new uniforms[glValues[uniform.type]](context, name, location, uniform.size));
     }
