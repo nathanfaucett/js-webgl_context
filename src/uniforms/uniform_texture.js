@@ -4,8 +4,8 @@ var Uniform = require("./uniform");
 module.exports = UniformTexture;
 
 
-function UniformTexture(context, name, location) {
-    Uniform.call(this, context, name, location);
+function UniformTexture(context, name, location, size) {
+    Uniform.call(this, context, name, location, size);
 }
 Uniform.extend(UniformTexture);
 

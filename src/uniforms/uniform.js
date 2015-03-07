@@ -4,10 +4,11 @@ var inherits = require("inherits");
 module.exports = Uniform;
 
 
-function Uniform(context, name, location) {
+function Uniform(context, name, location, size) {
     this.name = name;
     this.location = location;
     this.context = context;
+    this.size = size;
     this.value = null;
 }
 

@@ -4,8 +4,8 @@ var Uniform = require("./uniform");
 module.exports = UniformTextureCube;
 
 
-function UniformTextureCube(context, name, location) {
-    Uniform.call(this, context, name, location);
+function UniformTextureCube(context, name, location, size) {
+    Uniform.call(this, context, name, location, size);
 }
 Uniform.extend(UniformTextureCube);
 

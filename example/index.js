@@ -47,13 +47,15 @@ programA.compile(
         "uniform mat4 projection;",
         "uniform mat4 modelView;",
 
+        "uniform vec2 offset;",
+
         "attribute vec3 position;",
         "attribute vec2 uv;",
 
         "varying vec2 vUv;",
 
         "void main(void) {",
-        "    vUv = uv;",
+        "    vUv = offset + uv;",
         "    gl_Position = projection * modelView * vec4(position, 1.0);",
         "}"
     ].join("\n"), [
@@ -108,11 +110,15 @@ triangleBuffer.compile(gl.ARRAY_BUFFER, new Float32Array([
 
 var perspectiveMatrix = mat4.perspective(mat4.create(), 45, canvas.width / canvas.height, 0.1, 1024),
     modelView = mat4.create(),
-    camera = [0, 0, -5];
+    camera = [0, 0, -5],
+    offset = [0, 0];
 
 function renderBox(ms) {
     camera[0] = Math.sin(ms * 0.001) * 2;
     camera[1] = 0;
+
+    offset[0] = Math.sin(ms * 0.001) * 0.5;
+    offset[1] = Math.cos(ms * 0.001) * 0.5;
 
     context.setProgram(programA);
 
@@ -121,6 +127,7 @@ function renderBox(ms) {
     programA.attributes.get("position").set(buffer, 0);
     programA.attributes.get("uv").set(buffer, 12);
 
+    programA.uniforms.get("offset").set(offset);
     programA.uniforms.get("projection").set(perspectiveMatrix);
     programA.uniforms.get("modelView").set(modelView);
     programA.uniforms.get("texture").set(textureA);

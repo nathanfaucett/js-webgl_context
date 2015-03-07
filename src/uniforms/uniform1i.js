@@ -4,8 +4,8 @@ var Uniform = require("./uniform");
 module.exports = Uniform1i;
 
 
-function Uniform1i(context, name, location) {
-    Uniform.call(this, context, name, location);
+function Uniform1i(context, name, location, size) {
+    Uniform.call(this, context, name, location, size);
 }
 Uniform.extend(Uniform1i);
 

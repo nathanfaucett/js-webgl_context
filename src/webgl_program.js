@@ -52,36 +52,18 @@ WebGLProgram.prototype.compile = function(vertex, fragment) {
     return this;
 };
 
-var reName = /[^[]+/;
-
 function parseUniforms(gl, context, glProgram, hash) {
     var length = gl.getProgramParameter(glProgram, gl.ACTIVE_UNIFORMS),
         glValues = enums.glValues,
         i = -1,
         il = length - 1,
-        uniform, name, array, Class, location, tmpName, j, jl;
+        uniform, name, location;
 
     while (i++ < il) {
         uniform = gl.getActiveUniform(glProgram, i);
-
-        if (uniform.size > 1) {
-            Class = uniforms[glValues[uniform.type]];
-            name = reName.exec(uniform.name)[0];
-            array = new Array(uniform.size);
-            array.name = name;
-            j = -1;
-            jl = array.length - 1;
-            while (j++ < jl) {
-                tmpName = name + "[" + j + "]";
-                location = gl.getUniformLocation(glProgram, tmpName);
-                array[j] = new Class(context, tmpName, location);
-            }
-            hash.add(array);
-        } else {
-            name = uniform.name;
-            location = gl.getUniformLocation(glProgram, name);
-            hash.add(new uniforms[glValues[uniform.type]](context, name, location));
-        }
+        name = uniform.name;
+        location = gl.getUniformLocation(glProgram, name);
+        hash.add(new uniforms[glValues[uniform.type]](context, name, location, uniform.size));
     }
 }
 

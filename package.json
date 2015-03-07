@@ -11,6 +11,9 @@
     "webgl_context",
     "webgl_context.js"
   ],
+  "scripts": {
+    "example": "comn -f example/index.js -o example/index.min.js"
+  },
   "author": "Nathan Faucett",
   "license": "BSD-2-Clause",
   "readmeFilename": "README.md",

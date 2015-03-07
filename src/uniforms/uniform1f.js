@@ -4,17 +4,23 @@ var Uniform = require("./uniform");
 module.exports = Uniform1f;
 
 
-function Uniform1f(context, name, location) {
-    Uniform.call(this, context, name, location);
+function Uniform1f(context, name, location, size) {
+    Uniform.call(this, context, name, location, size);
 }
 Uniform.extend(Uniform1f);
 
 Uniform1f.prototype.set = function(value, force) {
     var context = this.context;
 
-    if (force || context.__programForce || this.value !== value) {
-        context.gl.uniform1f(this.location, value);
-        this.value = value;
+    if (force || context.__programForce) {
+        if (this.size === 1) {
+            if (this.value !== value) {
+                context.gl.uniform1f(this.location, value);
+                this.value = value;
+            }
+        } else {
+            context.gl.uniform1fv(this.location, value);
+        }
     }
 
     return this;
