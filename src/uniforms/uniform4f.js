@@ -17,15 +17,15 @@ Uniform.extend(Uniform4f);
 Uniform4f.prototype.set = function(value, force) {
     var context = this.context;
 
-    if (force || context.__programForce) {
-        if (this.size === 1) {
+    if (this.size === 1) {
+        if (force || context.__programForce) {
             if (vec4.notEqual(this.value, value)) {
                 context.gl.uniform4f(this.location, value[0], value[1], value[2], value[3]);
                 vec4.copy(this.value, value);
             }
-        } else {
-            context.gl.uniform4fv(this.location, value);
         }
+    } else {
+        context.gl.uniform4fv(this.location, value);
     }
 
     return this;

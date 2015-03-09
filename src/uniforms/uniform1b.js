@@ -16,15 +16,15 @@ Uniform.extend(Uniform1b);
 Uniform1b.prototype.set = function(value, force) {
     var context = this.context;
 
-    if (force || context.__programForce) {
-        if (this.size === 1) {
+    if (this.size === 1) {
+        if (force || context.__programForce) {
             if (this.value !== value) {
                 context.gl.uniform1i(this.location, value);
                 this.value = value;
             }
-        } else {
-            context.gl.uniform1iv(this.location, value);
         }
+    } else {
+        context.gl.uniform1iv(this.location, value);
     }
 
     return this;
