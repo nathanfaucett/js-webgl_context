@@ -254,7 +254,11 @@ WebGLContext.prototype.setProgram = function(program, force) {
             this.gl.useProgram(null);
         }
     } else {
-        this.__programForce = false;
+        if (this.__textureIndex !== 0 || this.__activeIndex !== -1) {
+            this.__programForce = true;
+        } else {
+            this.__programForce = false;
+        }
     }
 
     this.__textureIndex = 0;

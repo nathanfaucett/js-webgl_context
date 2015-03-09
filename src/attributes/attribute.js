@@ -14,6 +14,6 @@ Attribute.extend = function(child) {
     return inherits(child, this);
 };
 
-Attribute.prototype.set = function( /* value, force */ ) {
+Attribute.prototype.set = function( /* buffer, offset, force */ ) {
     return this;
 };
