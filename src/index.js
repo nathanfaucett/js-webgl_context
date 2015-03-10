@@ -729,16 +729,17 @@ function WebGLContext_getGLContext(_this) {
 
     if (gl == null) {
         _this.emit("webglcontextcreationfailed");
-        return;
-    }
+    } else {
+        _this.emit("webglcontextcreation");
 
-    if (!gl.getShaderPrecisionFormat) {
-        gl.getShaderPrecisionFormat = getShaderPrecisionFormat;
-    }
+        if (!gl.getShaderPrecisionFormat) {
+            gl.getShaderPrecisionFormat = getShaderPrecisionFormat;
+        }
 
-    _this.gl = gl;
-    getGPUInfo(_this);
-    _this.resetGL();
+        _this.gl = gl;
+        getGPUInfo(_this);
+        _this.resetGL();
+    }
 }
 
 function getShaderPrecisionFormat() {
