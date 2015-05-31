@@ -22,11 +22,9 @@ UniformMatrix3fv.prototype.set = function(value, force) {
     var context = this.context;
 
     if (this.size === 1) {
-        if (force || context.__programForce) {
-            if (mat3.notEqual(this.value, value)) {
-                context.gl.uniformMatrix3fv(this.location, false, value);
-                mat3.copy(this.value, value);
-            }
+        if (force || context.__programForce || mat3.notEqual(this.value, value)) {
+            context.gl.uniformMatrix3fv(this.location, false, value);
+            mat3.copy(this.value, value);
         }
     } else {
         context.gl.uniformMatrix3fv(this.location, false, value);

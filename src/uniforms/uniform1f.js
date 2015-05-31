@@ -17,11 +17,9 @@ Uniform1f.prototype.set = function(value, force) {
     var context = this.context;
 
     if (this.size === 1) {
-        if (force || context.__programForce) {
-            if (this.value !== value) {
-                context.gl.uniform1f(this.location, value);
-                this.value = value;
-            }
+        if (force || context.__programForce || this.value !== value) {
+            context.gl.uniform1f(this.location, value);
+            this.value = value;
         }
     } else {
         context.gl.uniform1fv(this.location, value);

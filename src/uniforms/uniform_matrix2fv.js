@@ -18,11 +18,9 @@ UniformMatrix2fv.prototype.set = function(value, force) {
     var context = this.context;
 
     if (this.size === 1) {
-        if (force || context.__programForce) {
-            if (mat2.notEqual(this.value, value)) {
-                context.gl.uniformMatrix2fv(this.location, false, value);
-                mat2.copy(this.value, value);
-            }
+        if (force || context.__programForce || mat2.notEqual(this.value, value)) {
+            context.gl.uniformMatrix2fv(this.location, false, value);
+            mat2.copy(this.value, value);
         }
     } else {
         context.gl.uniformMatrix2fv(this.location, false, value);
