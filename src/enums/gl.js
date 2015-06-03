@@ -1,4 +1,7 @@
-module.exports = {
+var enums = require("enums");
+
+
+module.exports = enums({
     ACTIVE_ATTRIBUTES: 35721,
     ACTIVE_TEXTURE: 34016,
     ACTIVE_UNIFORMS: 35718,
@@ -296,4 +299,4 @@ module.exports = {
     VERTEX_SHADER: 35633,
     VIEWPORT: 2978,
     ZERO: 0
-};
+});

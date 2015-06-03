@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "color": "nathanfaucett/color",
-    "reverse": "nathanfaucett/reverse",
+    "enums": "git://github.com/nathanfaucett/enums.git",
     "environment": "nathanfaucett/environment",
     "event_emitter": "nathanfaucett/event_emitter",
     "event_listener": "nathanfaucett/event_listener",
@@ -36,6 +36,7 @@
     "mat3": "nathanfaucett/mat3",
     "mat4": "nathanfaucett/mat4",
     "mathf": "nathanfaucett/mathf",
+    "reverse": "nathanfaucett/reverse",
     "vec2": "nathanfaucett/vec2",
     "vec3": "nathanfaucett/vec3",
     "vec4": "nathanfaucett/vec4"

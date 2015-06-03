@@ -1,7 +1,8 @@
-var gl = require("./gl");
+var enums = require("enums"),
+    gl = require("./gl");
 
 
-module.exports = {
+module.exports = enums({
     None: 1,
     Never: gl.NEVER,
     Less: gl.LESS,
@@ -11,4 +12,4 @@ module.exports = {
     NotEqual: gl.NOTEQUAL,
     GreaterThanOrEqual: gl.GEQUAL,
     Always: gl.ALWAYS
-};
+});

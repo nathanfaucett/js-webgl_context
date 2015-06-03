@@ -7,6 +7,8 @@ var canvas = document.getElementById("canvas"),
     context = new WebGLContext(),
     gl;
 
+global.WebGLContext = WebGLContext;
+
 function loadImage(src, callback) {
     var image = new Image(),
         texture = {
