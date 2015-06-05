@@ -1,19 +1,19 @@
-var Uniform = require("./uniform");
+var Uniform = require("./Uniform");
 
 
 var NativeInt32Array = typeof(Int32Array) !== "undefined" ? Int32Array : Array;
 
 
-module.exports = Uniform1b;
+module.exports = Uniform1i;
 
 
-function Uniform1b(context, name, location, size) {
+function Uniform1i(context, name, location, size) {
     Uniform.call(this, context, name, location, size);
     this.value = size === 1 ? NaN : new NativeInt32Array(size);
 }
-Uniform.extend(Uniform1b);
+Uniform.extend(Uniform1i);
 
-Uniform1b.prototype.set = function(value, force) {
+Uniform1i.prototype.set = function(value, force) {
     var context = this.context;
 
     if (this.size === 1) {

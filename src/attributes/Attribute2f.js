@@ -1,15 +1,15 @@
-var Attribute = require("./attribute");
+var Attribute = require("./Attribute");
 
 
-module.exports = Attribute2i;
+module.exports = Attribute2f;
 
 
-function Attribute2i(context, name, location) {
+function Attribute2f(context, name, location) {
     Attribute.call(this, context, name, location);
 }
-Attribute.extend(Attribute2i);
+Attribute.extend(Attribute2f);
 
-Attribute2i.prototype.set = function(buffer, offset, force) {
+Attribute2f.prototype.set = function(buffer, offset, force) {
     var context = this.context,
         gl = context.gl;
 

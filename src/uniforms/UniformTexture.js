@@ -1,4 +1,4 @@
-var Uniform = require("./uniform");
+var Uniform = require("./Uniform");
 
 
 module.exports = UniformTexture;

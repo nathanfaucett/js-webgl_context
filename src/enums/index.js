@@ -4,14 +4,14 @@ var reverse = require("reverse");
 var enums = exports;
 
 
-enums.Blending = require("./blending");
-enums.CullFace = require("./cull_face");
-enums.Depth = require("./depth");
-enums.FilterMode = require("./filter_mode");
+enums.blending = require("./blending");
+enums.cullFace = require("./cullFace");
+enums.depth = require("./depth");
+enums.filterMode = require("./filterMode");
 
 enums.gl = require("./gl");
 enums.glValues = reverse(enums.gl);
 
-enums.TextureFormat = require("./texture_format");
-enums.TextureType = require("./texture_type");
-enums.TextureWrap = require("./texture_wrap");
+enums.textureFormat = require("./textureFormat");
+enums.textureType = require("./textureType");
+enums.textureWrap = require("./textureWrap");

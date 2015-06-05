@@ -3,8 +3,8 @@ var isArray = require("is_array"),
     enums = require("./enums/index");
 
 
-var TextureType = enums.TextureType,
-    FilterMode = enums.FilterMode;
+var textureType = enums.textureType,
+    filterMode = enums.filterMode;
 
 
 module.exports = WebGLTexture;
@@ -56,7 +56,7 @@ function WebGLTexture_getGLTexture(_this) {
         filter = texture.filter,
         format = getFormat(gl, texture.format),
         wrap = isPOT ? getWrap(gl, texture.wrap) : gl.CLAMP_TO_EDGE,
-        textureType = getType(gl, texture.type),
+        type = getType(gl, texture.type),
 
         TFA = (anisotropy > 0) && context.getExtension("EXT_texture_filter_anisotropic"),
         TEXTURE_TYPE = isCubeMap ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D,
@@ -80,19 +80,19 @@ function WebGLTexture_getGLTexture(_this) {
         }
     }
 
-    if (filter === FilterMode.None) {
+    if (filter === filterMode.NONE) {
         magFilter = gl.NEAREST;
         minFilter = isPOT && generateMipmap ? gl.LINEAR_MIPMAP_NEAREST : gl.NEAREST;
-    } else { //FilterMode.Linear
+    } else { //filterMode.LINEAR
         magFilter = gl.LINEAR;
         minFilter = isPOT && generateMipmap ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR;
     }
 
     if (
-        (textureType === TextureType.Float && !context.getExtension("OES_texture_float")) ||
-        (textureType === TextureType.DepthComponent && !context.getExtension("WEBGL_depth_texture"))
+        (type === textureType.FLOAT && !context.getExtension("OES_texture_float")) ||
+        (type === textureType.DEPTH_COMPONENT && !context.getExtension("WEBGL_depth_texture"))
     ) {
-        textureType = gl.UNSIGNED_BYTE;
+        type = gl.UNSIGNED_BYTE;
     }
 
     gl.bindTexture(TEXTURE_TYPE, glTexture);
@@ -104,22 +104,22 @@ function WebGLTexture_getGLTexture(_this) {
         if (isCubeMap) {
             i = images.length;
             while (i--) {
-                gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, format, textureType, images[i]);
+                gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, format, type, images[i]);
             }
         } else {
-            gl.texImage2D(TEXTURE_TYPE, 0, format, format, textureType, image);
+            gl.texImage2D(TEXTURE_TYPE, 0, format, format, type, image);
         }
     } else {
         if (isCubeMap) {
             i = image.length;
             while (i--) {
-                gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, textureType, null);
+                gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, type, null);
             }
         } else {
-            if (textureType === TextureType.DepthComponent) {
-                gl.texImage2D(TEXTURE_TYPE, 0, textureType, width, height, 0, textureType, gl.UNSIGNED_SHORT, null);
+            if (type === textureType.DEPTH_COMPONENT) {
+                gl.texImage2D(TEXTURE_TYPE, 0, type, width, height, 0, type, gl.UNSIGNED_SHORT, null);
             } else {
-                gl.texImage2D(TEXTURE_TYPE, 0, format, width, height, 0, format, textureType, null);
+                gl.texImage2D(TEXTURE_TYPE, 0, format, width, height, 0, format, type, null);
             }
         }
     }

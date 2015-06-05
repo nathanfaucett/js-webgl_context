@@ -1,4 +1,4 @@
-var Uniform = require("./uniform");
+var Uniform = require("./Uniform");
 
 
 var NativeFloat32Array = typeof(Float32Array) !== "undefined" ? Float32Array : Array;

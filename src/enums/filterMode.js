@@ -2,6 +2,6 @@ var enums = require("enums");
 
 
 module.exports = enums({
-    None: 1,
-    Linear: 2
+    NONE: 1,
+    LINEAR: 2
 });

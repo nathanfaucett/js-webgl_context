@@ -1,5 +1,5 @@
 var vec2 = require("vec2"),
-    Uniform = require("./uniform");
+    Uniform = require("./Uniform");
 
 
 var NativeInt32Array = typeof(Int32Array) !== "undefined" ? Int32Array : Array;

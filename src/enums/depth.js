@@ -3,13 +3,13 @@ var enums = require("enums"),
 
 
 module.exports = enums({
-    None: 1,
-    Never: gl.NEVER,
-    Less: gl.LESS,
-    Equal: gl.EQUAL,
-    LessThenOrEqual: gl.LEQUAL,
-    Greater: gl.GREATER,
-    NotEqual: gl.NOTEQUAL,
-    GreaterThanOrEqual: gl.GEQUAL,
-    Always: gl.ALWAYS
+    NONE: 1,
+    NEVER: gl.NEVER,
+    LESS: gl.LESS,
+    EQUAL: gl.EQUAL,
+    LEQUAL: gl.LEQUAL,
+    GREATER: gl.GREATER,
+    NOTEQUAL: gl.NOTEQUAL,
+    GEQUAL: gl.GEQUAL,
+    ALWAYS: gl.ALWAYS
 });

@@ -5,7 +5,7 @@ var enums = require("enums"),
 module.exports = enums({
     RGB: gl.RGB,
     RGBA: gl.RGBA,
-    Alpha: gl.ALPHA,
-    Luminance: gl.LUMINANCE,
-    LuminanceAlpha: gl.LUMINANCE_ALPHA
+    ALPHA: gl.ALPHA,
+    LUMINANCE: gl.LUMINANCE,
+    LUMINANCE_ALPHA: gl.LUMINANCE_ALPHA
 });

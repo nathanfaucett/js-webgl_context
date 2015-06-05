@@ -5,16 +5,16 @@ var mathf = require("mathf"),
     eventListener = require("event_listener"),
     color = require("color"),
 
-    enums = require("./enums/index"),
-    WebGLBuffer = require("./webgl_buffer"),
-    WebGLTexture = require("./webgl_texture"),
-    WebGLProgram = require("./webgl_program");
+    enums = require("./enums"),
+    WebGLBuffer = require("./WebGLBuffer"),
+    WebGLTexture = require("./WebGLTexture"),
+    WebGLProgram = require("./WebGLProgram");
 
 
 var NativeUint8Array = typeof(Uint8Array) !== "undefined" ? Uint8Array : Array,
-    CullFace = enums.CullFace,
-    Blending = enums.Blending,
-    Depth = enums.Depth,
+    cullFace = enums.cullFace,
+    blending = enums.blending,
+    depth = enums.depth,
     WebGLContextPrototype;
 
 
@@ -214,9 +214,9 @@ WebGLContextPrototype.resetGL = function() {
     this.setViewport(0, 0, 1, 1);
     this.setDepthWrite(true);
     this.setLineWidth(1);
-    this.setDepthFunc(Depth.Less);
-    this.setCullFace(CullFace.Back);
-    this.setBlending(Blending.Default);
+    this.setDepthFunc(depth.LESS);
+    this.setCullFace(cullFace.BACK);
+    this.setBlending(blending.DEFAULT);
     this.setClearColor(color.set(this.__clearColor, 0, 0, 0), 1);
     this.setProgram(null);
     this.clearCanvas();
@@ -230,19 +230,19 @@ WebGLContextPrototype.clampMaxSize = function(image, isCubeMap) {
 
     if (!image || (image.height <= maxSize && image.width <= maxSize)) {
         return image;
+    } else {
+        maxDim = 1 / mathf.max(image.width, image.height);
+        newWidth = (image.width * maxSize * maxDim) | 0;
+        newHeight = (image.height * maxSize * maxDim) | 0;
+        canvas = document.createElement("canvas");
+        ctx = canvas.getContext("2d");
+
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, newWidth, newHeight);
+
+        return canvas;
     }
-
-    maxDim = 1 / mathf.max(image.width, image.height);
-    newWidth = (image.width * maxSize * maxDim) | 0;
-    newHeight = (image.height * maxSize * maxDim) | 0;
-    canvas = document.createElement("canvas");
-    ctx = canvas.getContext("2d");
-
-    canvas.width = newWidth;
-    canvas.height = newHeight;
-    ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, newWidth, newHeight);
-
-    return canvas;
 };
 
 WebGLContextPrototype.setProgram = function(program, force) {
@@ -409,49 +409,49 @@ WebGLContextPrototype.setDepthFunc = function(depthFunc) {
 
     if (this.__depthFunc !== depthFunc) {
         switch (depthFunc) {
-            case Depth.Never:
+            case depth.NEVER:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
                 gl.depthFunc(gl.NEVER);
                 break;
-            case Depth.Less:
+            case depth.LESS:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
                 gl.depthFunc(gl.LESS);
                 break;
-            case Depth.Equal:
+            case depth.EQUAL:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
                 gl.depthFunc(gl.EQUAL);
                 break;
-            case Depth.LessThenOrEqual:
+            case depth.LEQUAL:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
                 gl.depthFunc(gl.LEQUAL);
                 break;
-            case Depth.Greater:
+            case depth.GREATER:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
                 gl.depthFunc(gl.GREATER);
                 break;
-            case Depth.NotEqual:
+            case depth.NOTEQUAL:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
                 gl.depthFunc(gl.NOTEQUAL);
                 break;
-            case Depth.GreaterThanOrEqual:
+            case depth.GEQUAL:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
                 gl.depthFunc(gl.GEQUAL);
                 break;
-            case Depth.Always:
+            case depth.ALWAYS:
                 if (this.__depthTestDisabled) {
                     gl.enable(gl.DEPTH_TEST);
                 }
@@ -459,7 +459,7 @@ WebGLContextPrototype.setDepthFunc = function(depthFunc) {
                 break;
             default:
                 this.__depthTestDisabled = true;
-                this.__depthFunc = Depth.None;
+                this.__depthFunc = depth.NONE;
                 gl.disable(gl.DEPTH_TEST);
                 return this;
         }
@@ -471,24 +471,24 @@ WebGLContextPrototype.setDepthFunc = function(depthFunc) {
     return this;
 };
 
-WebGLContextPrototype.setCullFace = function(cullFace) {
+WebGLContextPrototype.setCullFace = function(value) {
     var gl = this.gl;
 
-    if (this.__cullFace !== cullFace) {
-        switch (cullFace) {
-            case CullFace.Back:
+    if (this.__cullFace !== value) {
+        switch (value) {
+            case cullFace.BACK:
                 if (this.__cullFaceDisabled) {
                     gl.enable(gl.CULL_FACE);
                 }
                 gl.cullFace(gl.BACK);
                 break;
-            case CullFace.Front:
+            case cullFace.FRONT:
                 if (this.__cullFaceDisabled) {
                     gl.enable(gl.CULL_FACE);
                 }
                 gl.cullFace(gl.FRONT);
                 break;
-            case CullFace.FrontBack:
+            case cullFace.FRONT_AND_BACK:
                 if (this.__cullFaceDisabled) {
                     gl.enable(gl.CULL_FACE);
                 }
@@ -496,45 +496,45 @@ WebGLContextPrototype.setCullFace = function(cullFace) {
                 break;
             default:
                 this.__cullFaceDisabled = true;
-                this.__cullFace = CullFace.None;
+                this.__cullFace = cullFace.NONE;
                 gl.disable(gl.CULL_FACE);
                 return this;
         }
 
         this.__cullFaceDisabled = false;
-        this.__cullFace = cullFace;
+        this.__cullFace = value;
     }
 
     return this;
 };
 
-WebGLContextPrototype.setBlending = function(blending) {
+WebGLContextPrototype.setBlending = function(value) {
     var gl = this.gl;
 
-    if (this.__blending !== blending) {
-        switch (blending) {
-            case Blending.Additive:
+    if (this.__blending !== value) {
+        switch (value) {
+            case blending.ADDITIVE:
                 if (this.__blendingDisabled) {
                     gl.enable(gl.BLEND);
                 }
                 gl.blendEquation(gl.FUNC_ADD);
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
                 break;
-            case Blending.Subtractive:
+            case blending.SUBTRACTIVE:
                 if (this.__blendingDisabled) {
                     gl.enable(gl.BLEND);
                 }
                 gl.blendEquation(gl.FUNC_ADD);
                 gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_COLOR);
                 break;
-            case Blending.Muliply:
+            case blending.MULTIPLY:
                 if (this.__blendingDisabled) {
                     gl.enable(gl.BLEND);
                 }
                 gl.blendEquation(gl.FUNC_ADD);
                 gl.blendFunc(gl.ZERO, gl.SRC_COLOR);
                 break;
-            case Blending.Default:
+            case blending.DEFAULT:
                 if (this.__blendingDisabled) {
                     gl.enable(gl.BLEND);
                 }
@@ -544,12 +544,12 @@ WebGLContextPrototype.setBlending = function(blending) {
             default:
                 gl.disable(gl.BLEND);
                 this.__blendingDisabled = true;
-                this.__blending = Blending.None;
+                this.__blending = blending.NONE;
                 return this;
         }
 
         this.__blendingDisabled = false;
-        this.__blending = blending;
+        this.__blending = value;
     }
 
     return this;

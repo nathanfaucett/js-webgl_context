@@ -1,4 +1,4 @@
-var Attribute = require("./attribute");
+var Attribute = require("./Attribute");
 
 
 module.exports = Attribute4i;
