@@ -1,4 +1,4 @@
-var reverse = require("reverse");
+var objectReverse = require("object-reverse");
 
 
 var enums = exports;
@@ -10,7 +10,7 @@ enums.depth = require("./depth");
 enums.filterMode = require("./filterMode");
 
 enums.gl = require("./gl");
-enums.glValues = reverse(enums.gl);
+enums.glValues = objectReverse(enums.gl);
 
 enums.textureFormat = require("./textureFormat");
 enums.textureType = require("./textureType");

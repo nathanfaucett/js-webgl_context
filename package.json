@@ -24,21 +24,21 @@
     "request_animation_frame": "git://github.com/nathanfaucett/request_animation_frame.git"
   },
   "dependencies": {
-    "color": "nathanfaucett/color",
+    "color": "git://github.com/nathanfaucett/color.git",
     "enums": "git://github.com/nathanfaucett/enums.git",
-    "environment": "nathanfaucett/environment",
-    "event_emitter": "nathanfaucett/event_emitter",
-    "event_listener": "nathanfaucett/event_listener",
-    "fast_hash": "git://github.com/nathanfaucett/fast_hash",
-    "inherits": "nathanfaucett/inherits",
-    "is_array": "nathanfaucett/is_array",
-    "mat2": "nathanfaucett/mat2",
-    "mat3": "nathanfaucett/mat3",
-    "mat4": "nathanfaucett/mat4",
-    "mathf": "nathanfaucett/mathf",
-    "reverse": "nathanfaucett/reverse",
-    "vec2": "nathanfaucett/vec2",
-    "vec3": "nathanfaucett/vec3",
-    "vec4": "nathanfaucett/vec4"
+    "environment": "git://github.com/nathanfaucett/environment.git",
+    "event_emitter": "git://github.com/nathanfaucett/event_emitter.git",
+    "event_listener": "git://github.com/nathanfaucett/event_listener.git",
+    "fast_hash": "git://github.com/nathanfaucett/fast_hash.git",
+    "inherits": "git://github.com/nathanfaucett/inherits.git",
+    "is_array": "git://github.com/nathanfaucett/is_array.git",
+    "mat2": "git://github.com/nathanfaucett/mat2.git",
+    "mat3": "git://github.com/nathanfaucett/mat3.git",
+    "mat4": "git://github.com/nathanfaucett/mat4.git",
+    "mathf": "git://github.com/nathanfaucett/mathf.git",
+    "object-reverse": "git://github.com/nathanfaucett/object-reverse.git",
+    "vec2": "git://github.com/nathanfaucett/vec2.git",
+    "vec3": "git://github.com/nathanfaucett/vec3.git",
+    "vec4": "git://github.com/nathanfaucett/vec4.git"
   }
 }
