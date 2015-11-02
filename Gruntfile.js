@@ -4,16 +4,15 @@ module.exports = function(grunt) {
         jsbeautifier: {
             files: [
                 "Gruntfile.js",
-                "example/index.js",
-                "example/index.min.js",
-                "src/**/*.js"
+                "src/**/*.js",
+                "test/**/*.js"
             ]
         },
         jshint: {
             options: {
                 es3: true,
                 unused: true,
-                curly: false,
+                curly: true,
                 eqeqeq: true,
                 expr: true,
                 eqnull: true,
@@ -21,8 +20,8 @@ module.exports = function(grunt) {
             },
             files: [
                 "Gruntfile.js",
-                "example/index.js",
-                "src/**/*.js"
+                "src/**/*.js",
+                "test/**/*.js"
             ]
         }
     });
