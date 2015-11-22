@@ -34,7 +34,14 @@ function WebGLContext() {
     this.gl = null;
     this.canvas = null;
 
-    this.__attributes = {};
+    this.__attributes = {
+        alpha: true,
+        antialias: true,
+        depth: true,
+        premultipliedAlpha: true,
+        preserveDrawingBuffer: false,
+        stencil: true
+    };
 
     this.__textures = {};
     this.__framebuffers = {};
@@ -778,12 +785,12 @@ WebGLContextPrototype.getExtension = function(name, throwError) {
 function getAttributes(attributes, options) {
     options = options || {};
 
-    attributes.alpha = options.alpha != null ? !!options.alpha : true;
-    attributes.antialias = options.antialias != null ? !!options.antialias : true;
-    attributes.depth = options.depth != null ? !!options.depth : true;
-    attributes.premultipliedAlpha = options.premultipliedAlpha != null ? !!options.premultipliedAlpha : true;
-    attributes.preserveDrawingBuffer = options.preserveDrawingBuffer != null ? !!options.preserveDrawingBuffer : false;
-    attributes.stencil = options.stencil != null ? !!options.stencil : true;
+    attributes.alpha = options.alpha != null ? !!options.alpha : attributes.alpha;
+    attributes.antialias = options.antialias != null ? !!options.antialias : attributes.antialias;
+    attributes.depth = options.depth != null ? !!options.depth : attributes.depth;
+    attributes.premultipliedAlpha = options.premultipliedAlpha != null ? !!options.premultipliedAlpha : attributes.premultipliedAlpha;
+    attributes.preserveDrawingBuffer = options.preserveDrawingBuffer != null ? !!options.preserveDrawingBuffer : attributes.preserveDrawingBuffer;
+    attributes.stencil = options.stencil != null ? !!options.stencil : attributes.stencil;
 
     return attributes;
 }
