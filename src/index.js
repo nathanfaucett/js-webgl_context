@@ -8,6 +8,7 @@ var mathf = require("mathf"),
     enums = require("./enums"),
     WebGLBuffer = require("./WebGLBuffer"),
     WebGLTexture = require("./WebGLTexture"),
+    WebGLFrameBuffer = require("./WebGLFrameBuffer"),
     WebGLProgram = require("./WebGLProgram");
 
 
@@ -36,6 +37,7 @@ function WebGLContext() {
     this.__attributes = {};
 
     this.__textures = {};
+    this.__framebuffers = {};
 
     this.__precision = null;
     this.__extensions = {};
@@ -79,6 +81,8 @@ function WebGLContext() {
 
     this.__arrayBuffer = null;
     this.__elementArrayBuffer = null;
+
+    this.__framebuffer = null;
 
     this.__handlerContextLost = null;
     this.__handlerContextRestored = null;
@@ -177,6 +181,8 @@ WebGLContextPrototype.clearGL = function() {
     this.__arrayBuffer = null;
     this.__elementArrayBuffer = null;
 
+    this.__framebuffer = null;
+
     return this;
 };
 
@@ -209,6 +215,8 @@ WebGLContextPrototype.resetGL = function() {
 
     this.__arrayBuffer = null;
     this.__elementArrayBuffer = null;
+
+    this.__framebuffer = null;
 
     this.disableAttributes();
     this.setViewport(0, 0, 1, 1);
@@ -280,16 +288,56 @@ WebGLContextPrototype.setTexture = function(location, texture, force) {
     if (this.__activeTexture !== webglTexture || force) {
         this.__activeTexture = webglTexture;
 
+        if (needsUpdate || this.__programForce || force) {
+            gl.activeTexture(gl.TEXTURE0 + index);
+            gl.uniform1i(location, index);
+        }
+
         if (webglTexture.isCubeMap) {
             gl.bindTexture(gl.TEXTURE_CUBE_MAP, webglTexture.getGLTexture());
         } else {
             gl.bindTexture(gl.TEXTURE_2D, webglTexture.getGLTexture());
         }
 
-        if (needsUpdate || this.__programForce || force) {
-            gl.activeTexture(gl.TEXTURE0 + index);
-            gl.uniform1i(location, index);
+        return true;
+    } else {
+        return false;
+    }
+};
+
+WebGLContextPrototype.setFrameBuffer = function(framebuffer, force) {
+    var gl = this.gl,
+        webglFrameBuffer = this.createFrameBuffer(framebuffer),
+        glFrameBuffer, webglTexture;
+
+    if (this.__framebuffer !== webglFrameBuffer || force) {
+        this.__framebuffer = webglFrameBuffer;
+
+        webglTexture = this.createTexture(framebuffer.texture);
+        glFrameBuffer = webglFrameBuffer.getGLFrameBuffer();
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, glFrameBuffer);
+        gl.viewport(0, 0, webglTexture.getWidth(), webglTexture.getHeight());
+
+        if (webglFrameBuffer.isCubeMap) {
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_X + framebuffer.activeCubeFace, webglTexture.getGLTexture(), 0);
         }
+
+        return true;
+    } else {
+        return false;
+    }
+};
+
+WebGLContextPrototype.clearFrameBuffer = function() {
+    var gl = this.gl,
+        webglFrameBuffer = this.__framebuffer;
+
+    if (webglFrameBuffer !== null) {
+        this.__framebuffer = null;
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(this.__viewportX, this.__viewportY, this.__viewportWidth, this.__viewportHeight);
 
         return true;
     } else {
@@ -342,22 +390,54 @@ WebGLContextPrototype.createTexture = function(texture) {
     return textures[texture.__id] || (textures[texture.__id] = new WebGLTexture(this, texture));
 };
 
+WebGLContextPrototype.getTexture = function(texture) {
+    return this.__textures[texture.__id];
+};
+
+WebGLContextPrototype.createFrameBuffer = function(framebuffer) {
+    var framebuffers = this.__framebuffers;
+    return framebuffers[framebuffer.__id] || (framebuffers[framebuffer.__id] = new WebGLFrameBuffer(this, framebuffer));
+};
+
+WebGLContextPrototype.getFrameBuffer = function(framebuffer) {
+    return this.__framebuffers[framebuffer.__id];
+};
+
 WebGLContextPrototype.createBuffer = function() {
     return new WebGLBuffer(this);
 };
 
 WebGLContextPrototype.deleteProgram = function(program) {
-    this.gl.deleteProgram(program.glProgram);
+    if (program) {
+        program.destroy();
+    }
     return this;
 };
 
 WebGLContextPrototype.deleteTexture = function(texture) {
-    this.gl.deleteTexture(texture.glTexture);
+    var webglTexture = this.getTexture(texture);
+
+    if (webglTexture) {
+        webglTexture.destroy();
+    }
+
     return this;
 };
 
 WebGLContextPrototype.deleteBuffer = function(buffer) {
-    this.gl.deleteBuffer(buffer.glBuffer);
+    if (buffer) {
+        buffer.destroy();
+    }
+    return this;
+};
+
+WebGLContextPrototype.deleteFrameBuffer = function(frameBuffer) {
+    var webglFrameBuffer = this.getFrameBuffer(frameBuffer);
+
+    if (webglFrameBuffer) {
+        webglFrameBuffer.destroy();
+    }
+
     return this;
 };
 

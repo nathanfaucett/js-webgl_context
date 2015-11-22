@@ -3,7 +3,8 @@ var isArray = require("is_array"),
     enums = require("./enums/index");
 
 
-var textureType = enums.textureType,
+var WebGLTexturePrototype,
+    textureType = enums.textureType,
     filterMode = enums.filterMode;
 
 
@@ -20,12 +21,77 @@ function WebGLTexture(context, texture) {
     this.needsCompile = true;
     this.glTexture = null;
 
+    this.__format = null;
+    this.__type = null;
+    this.__wrap = null;
+    this.__isPOT = false;
+
     texture.on("update", function() {
         _this.needsCompile = true;
     });
 }
+WebGLTexturePrototype = WebGLTexture.prototype;
 
-WebGLTexture.prototype.getGLTexture = function() {
+WebGLTexturePrototype.destroy = function() {
+
+    if (this.glTexture) {
+        this.context.gl.deleteTexture(this.glTexture);
+        this.glTexture = null;
+        this.needsCompile = true;
+    }
+
+    return this;
+};
+
+WebGLTexturePrototype.getIsPOT = function() {
+    var texture;
+
+    if (this.needsCompile) {
+        texture = this.texture;
+        return (this.__isPOT = mathf.isPowerOfTwo(texture.width) && mathf.isPowerOfTwo(texture.height));
+    } else {
+        return this.__isPOT;
+    }
+
+};
+
+WebGLTexturePrototype.getWidth = function() {
+    return this.texture.width;
+};
+
+WebGLTexturePrototype.getHeight = function() {
+    return this.texture.height;
+};
+
+WebGLTexturePrototype.getFormat = function() {
+    if (this.needsCompile) {
+        return (this.__format = getFormat(this.context.gl, this.texture.format));
+    } else {
+        return this.__format;
+    }
+};
+
+WebGLTexturePrototype.getType = function() {
+    if (this.needsCompile) {
+        return (this.__type = getType(this.context, this.texture.type));
+    } else {
+        return this.__type;
+    }
+};
+
+WebGLTexturePrototype.getWrap = function() {
+    if (this.needsCompile) {
+        if (this.__isPOT) {
+            return (this.__wrap = getWrap(this.context.gl, this.texture.wrap));
+        } else {
+            return (this.__wrap = this.context.gl.CLAMP_TO_EDGE);
+        }
+    } else {
+        return this.__wrap;
+    }
+};
+
+WebGLTexturePrototype.getGLTexture = function() {
     if (this.needsCompile === false) {
         return this.glTexture;
     } else {
@@ -47,16 +113,17 @@ function WebGLTexture_getGLTexture(_this) {
 
         width = texture.width,
         height = texture.height,
-        isPOT = mathf.isPowerOfTwo(width) && mathf.isPowerOfTwo(height),
+        isPOT = _this.getIsPOT(),
 
         generateMipmap = texture.generateMipmap,
         flipY = texture.flipY,
         premultiplyAlpha = texture.premultiplyAlpha,
         anisotropy = texture.anisotropy,
         filter = texture.filter,
-        format = getFormat(gl, texture.format),
-        wrap = isPOT ? getWrap(gl, texture.wrap) : gl.CLAMP_TO_EDGE,
-        type = getType(gl, texture.type),
+
+        format = _this.getFormat(),
+        wrap = _this.getWrap(),
+        type = _this.getType(),
 
         TFA = (anisotropy > 0) && context.getExtension("EXT_texture_filter_anisotropic"),
         TEXTURE_TYPE = isCubeMap ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D,
@@ -86,13 +153,6 @@ function WebGLTexture_getGLTexture(_this) {
     } else { //filterMode.LINEAR
         magFilter = gl.LINEAR;
         minFilter = isPOT && generateMipmap ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR;
-    }
-
-    if (
-        (type === textureType.FLOAT && !context.getExtension("OES_texture_float")) ||
-        (type === textureType.DEPTH_COMPONENT && !context.getExtension("WEBGL_depth_texture"))
-    ) {
-        type = gl.UNSIGNED_BYTE;
     }
 
     gl.bindTexture(TEXTURE_TYPE, glTexture);
@@ -160,7 +220,16 @@ function getFormat(gl, format) {
     }
 }
 
-function getType(gl, type) {
+function getType(context, type) {
+    var gl = context.gl;
+
+    if (
+        (type === textureType.FLOAT && !context.getExtension("OES_texture_float")) ||
+        (type === textureType.DEPTH_COMPONENT && !context.getExtension("WEBGL_depth_texture"))
+    ) {
+        type = textureType.UNSIGNED_BYTE;
+    }
+
     switch (type) {
         case gl.FLOAT:
             return gl.FLOAT;

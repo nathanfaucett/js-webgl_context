@@ -1,3 +1,6 @@
+var WebGLBufferPrototype;
+
+
 module.exports = WebGLBuffer;
 
 
@@ -12,8 +15,20 @@ function WebGLBuffer(context) {
     this.glBuffer = null;
     this.needsCompile = true;
 }
+WebGLBufferPrototype = WebGLBuffer.prototype;
 
-WebGLBuffer.prototype.compile = function(type, array, stride, draw) {
+WebGLBufferPrototype.destroy = function() {
+
+    if (this.glBuffer) {
+        this.context.gl.deleteBuffer(this.glBuffer);
+        this.glBuffer = null;
+        this.needsCompile = true;
+    }
+
+    return this;
+};
+
+WebGLBufferPrototype.compile = function(type, array, stride, draw) {
     var gl = this.context.gl,
         glBuffer = this.glBuffer || (this.glBuffer = gl.createBuffer());
 

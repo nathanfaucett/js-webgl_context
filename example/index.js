@@ -1,6 +1,7 @@
 var mat4 = require("mat4"),
     requestAnimationFrame = require("request_animation_frame"),
-    WebGLContext = require("../src/index");
+    WebGLContext = require("..")
+    filterMode = require("../src/enums/filterMode");
 
 
 var canvas = document.getElementById("canvas"),
@@ -13,6 +14,9 @@ function loadImage(src, callback) {
     var image = new Image(),
         texture = {
             __id: src,
+            generateMipmap: false,
+            filter: filterMode.NONE,
+            anisotropy: 0,
             data: image,
             on: function() {}
         };
@@ -32,13 +36,32 @@ var count = 2;
 
 function check() {
     if (--count === 0) {
-        render();
+        render(0);
     }
 }
 var textureA = loadImage("a.jpg", check);
 var textureB = loadImage("b.jpg", check);
 
+var framebuffer = {
+    on: function() {},
+    depthBuffer: false,
+    stencilBuffer: false,
+    texture: {
+        __id: "framebuffer-texture",
+        data: null,
+        generateMipmap: false,
+        filter: filterMode.NONE,
+        anisotropy: 0,
+        width: canvas.width * 0.1,
+        height: canvas.height * 0.1,
+        on: function() {}
+    }
+};
+
 global.context = context;
+context.setAttributes({
+    antialias: false
+});
 context.setCanvas(canvas);
 gl = context.gl;
 context.setViewport(0, 0, canvas.width, canvas.height);
@@ -94,6 +117,29 @@ programB.compile(
 
         "void main(void) {",
         "    gl_FragColor = texture2D(texture, vec2(vUv.s, vUv.t)) * texture2D(texture1, vec2(vUv.s, vUv.t));",
+        "}"
+    ].join("\n")
+);
+
+var programFrameBuffer = context.createProgram();
+programFrameBuffer.compile(
+    [
+        "attribute vec3 position;",
+        "attribute vec2 uv;",
+
+        "varying vec2 vUv;",
+
+        "void main(void) {",
+        "    vUv = uv;",
+        "    gl_Position = vec4(position, 1.0);",
+        "}"
+    ].join("\n"), [
+        "uniform sampler2D texture;",
+
+        "varying vec2 vUv;",
+
+        "void main(void) {",
+        "    gl_FragColor = texture2D(texture, vec2(vUv.s, vUv.t));",
         "}"
     ].join("\n")
 );
@@ -163,12 +209,22 @@ function render(ms) {
     color[0] = Math.sin(ms * 0.00001);
     color[1] = Math.cos(ms * 0.0001);
     color[2] = Math.sin(ms * 0.001);
-
+    
+    context.setFrameBuffer(framebuffer);
+    
     context.setClearColor(color);
     context.clearCanvas();
-
+    
     renderBox(ms);
     renderTriangle(ms);
+    
+    context.clearFrameBuffer();
+    
+    context.setProgram(programFrameBuffer);
+    programFrameBuffer.attributes.get("position").set(buffer, 0);
+    programFrameBuffer.attributes.get("uv").set(buffer, 12);
+    programFrameBuffer.uniforms.get("texture").set(framebuffer.texture);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     requestAnimationFrame(render, canvas);
 }

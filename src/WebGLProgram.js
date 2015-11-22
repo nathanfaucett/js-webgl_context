@@ -6,7 +6,8 @@ var isArray = require("is_array"),
     attributes = require("./attributes/index");
 
 
-var reUniformName = /[^\[]+/;
+var reUniformName = /[^\[]+/,
+    WebGLProgramPrototype;
 
 
 module.exports = WebGLProgram;
@@ -25,8 +26,20 @@ function WebGLProgram(context) {
     this.needsCompile = true;
     this.glProgram = null;
 }
+WebGLProgramPrototype = WebGLProgram.prototype;
 
-WebGLProgram.prototype.compile = function(vertex, fragment) {
+WebGLProgramPrototype.destroy = function() {
+
+    if (this.glProgram) {
+        this.context.gl.deleteProgram(this.glProgram);
+        this.glProgram = null;
+        this.needsCompile = true;
+    }
+
+    return this;
+};
+
+WebGLProgramPrototype.compile = function(vertex, fragment) {
     var context = this.context,
         floatPrecision = this.floatPrecision,
         intPrecision = this.intPrecision,
