@@ -1,5 +1,8 @@
 var mathf = require("mathf"),
 
+    isNull = require("is_null"),
+    isNullOrUndefined = require("is_null_or_undefined"),
+
     environment = require("environment"),
     EventEmitter = require("event_emitter"),
     eventListener = require("event_listener"),
@@ -340,7 +343,7 @@ WebGLContextPrototype.clearFrameBuffer = function() {
     var gl = this.gl,
         webglFrameBuffer = this.__framebuffer;
 
-    if (webglFrameBuffer !== null) {
+    if (!isNull(webglFrameBuffer)) {
         this.__framebuffer = null;
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -749,28 +752,28 @@ WebGLContextPrototype.getExtension = function(name, throwError) {
         extension = extensions[name] || (extensions[name] = gl.getExtension(name)),
         i;
 
-    if (extension == null) {
+    if (isNullOrUndefined(extension)) {
         i = getExtension_upperPrefixes.length;
 
         while (i--) {
-            if ((extension = gl.getExtension(getExtension_upperPrefixes[i] + "_" + name))) {
+            if (!isNullOrUndefined(extension = gl.getExtension(getExtension_upperPrefixes[i] + "_" + name))) {
                 extensions[name] = extension;
                 break;
             }
         }
     }
-    if (extension == null) {
+    if (isNullOrUndefined(extension)) {
         i = getExtension_lowerPrefixes.length;
 
         while (i--) {
-            if ((extension = gl.getExtension(getExtension_lowerPrefixes[i] + name))) {
+            if (!isNullOrUndefined(extension = gl.getExtension(getExtension_lowerPrefixes[i] + name))) {
                 extensions[name] = extension;
                 break;
             }
         }
     }
 
-    if (extension == null) {
+    if (isNullOrUndefined(extension)) {
         if (throwError) {
             throw new Error("WebGLContext.getExtension: could not get Extension " + name);
         } else {
@@ -785,12 +788,12 @@ WebGLContextPrototype.getExtension = function(name, throwError) {
 function getAttributes(attributes, options) {
     options = options || {};
 
-    attributes.alpha = options.alpha != null ? !!options.alpha : attributes.alpha;
-    attributes.antialias = options.antialias != null ? !!options.antialias : attributes.antialias;
-    attributes.depth = options.depth != null ? !!options.depth : attributes.depth;
-    attributes.premultipliedAlpha = options.premultipliedAlpha != null ? !!options.premultipliedAlpha : attributes.premultipliedAlpha;
-    attributes.preserveDrawingBuffer = options.preserveDrawingBuffer != null ? !!options.preserveDrawingBuffer : attributes.preserveDrawingBuffer;
-    attributes.stencil = options.stencil != null ? !!options.stencil : attributes.stencil;
+    attributes.alpha = !isNullOrUndefined(options.alpha) ? !!options.alpha : attributes.alpha;
+    attributes.antialias = !isNullOrUndefined(options.antialias) ? !!options.antialias : attributes.antialias;
+    attributes.depth = !isNullOrUndefined(options.depth) ? !!options.depth : attributes.depth;
+    attributes.premultipliedAlpha = !isNullOrUndefined(options.premultipliedAlpha) ? !!options.premultipliedAlpha : attributes.premultipliedAlpha;
+    attributes.preserveDrawingBuffer = !isNullOrUndefined(options.preserveDrawingBuffer) ? !!options.preserveDrawingBuffer : attributes.preserveDrawingBuffer;
+    attributes.stencil = !isNullOrUndefined(options.stencil) ? !!options.stencil : attributes.stencil;
 
     return attributes;
 }
@@ -810,13 +813,13 @@ function handleWebGLContextContextRestored(_this, e) {
 function WebGLContext_getGLContext(_this) {
     var gl;
 
-    if (_this.gl != null) {
+    if (!isNullOrUndefined(_this.gl)) {
         _this.clearGL();
     }
 
     gl = getWebGLContext(_this.canvas, _this.__attributes);
 
-    if (gl == null) {
+    if (isNullOrUndefined(gl)) {
         _this.emit("webglcontextcreationfailed");
     } else {
         _this.emit("webglcontextcreation");
@@ -886,7 +889,7 @@ function getGPUInfo(_this) {
 }
 
 var getWebGLContext_webglNames = ["3d", "moz-webgl", "experimental-webgl", "webkit-3d", "webgl"],
-    getWebGLContext_attuibutes = {
+    getWebGLContext_webglAttributes = {
         alpha: true,
         antialias: true,
         depth: true,
@@ -896,25 +899,28 @@ var getWebGLContext_webglNames = ["3d", "moz-webgl", "experimental-webgl", "webk
     };
 
 function getWebGLContext(canvas, attributes) {
-    var i = getWebGLContext_webglNames.length,
+    var webglNames = getWebGLContext_webglNames,
+        webglAttributes = getWebGLContext_webglAttributes,
+        i = webglNames.length,
         gl, key;
 
     attributes = attributes || {};
 
-    for (key in getWebGLContext_attuibutes) {
-        if (attributes[key] == null) {
-            attributes[key] = getWebGLContext_attuibutes[key];
+    for (key in webglAttributes) {
+        if (isNullOrUndefined(attributes[key])) {
+            attributes[key] = webglAttributes[key];
         }
     }
 
     while (i--) {
         try {
-            gl = canvas.getContext(getWebGLContext_webglNames[i], attributes);
+            gl = canvas.getContext(webglNames[i], attributes);
             if (gl) {
                 return gl;
             }
         } catch (e) {}
     }
+
     if (!gl) {
         throw new Error("WebGLContext: could not get a WebGL Context");
     }

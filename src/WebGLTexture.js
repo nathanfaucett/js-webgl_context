@@ -1,4 +1,5 @@
 var isArray = require("is_array"),
+    isNullOrUndefined = require("is_null_or_undefined"),
     mathf = require("mathf"),
     enums = require("./enums/index");
 
@@ -108,7 +109,7 @@ function WebGLTexture_getGLTexture(_this) {
         glTexture = _this.glTexture || (_this.glTexture = gl.createTexture()),
 
         image = texture.data,
-        notNull = image != null,
+        notNull = !isNullOrUndefined(image),
         isCubeMap = isArray(image),
 
         width = texture.width,

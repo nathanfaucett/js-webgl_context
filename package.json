@@ -33,6 +33,7 @@
     "fast_hash": "git://github.com/nathanfaucett/fast_hash.git",
     "inherits": "git://github.com/nathanfaucett/inherits.git",
     "is_array": "git://github.com/nathanfaucett/is_array.git",
+    "is_null_or_undefined": "git://github.com/nathanfaucett/is_null_or_undefined.git",
     "mat2": "git://github.com/nathanfaucett/mat2.git",
     "mat3": "git://github.com/nathanfaucett/mat3.git",
     "mat4": "git://github.com/nathanfaucett/mat4.git",
