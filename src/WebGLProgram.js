@@ -1,5 +1,5 @@
-var isArray = require("is_array"),
-    FastHash = require("fast_hash"),
+var isArray = require("@nathanfaucett/is_array"),
+    FastHash = require("@nathanfaucett/fast_hash"),
 
     enums = require("./enums/index"),
     uniforms = require("./uniforms/index"),

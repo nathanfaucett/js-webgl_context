@@ -1,5 +1,5 @@
 {
-  "name": "webgl_context",
+  "name": "@nathanfaucett/webgl_context",
   "version": "0.0.1",
   "description": "WebGLContext for the browser",
   "repository": {
@@ -18,29 +18,29 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "comn": "git://github.com/nathanfaucett/comn.git",
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-jsbeautifier": "^0.2.10",
-    "request_animation_frame": "git://github.com/nathanfaucett/request_animation_frame.git"
+    "@nathanfaucett/comn": "^0.0.13",
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-jsbeautifier": "^0.2.13",
+    "@nathanfaucett/request_animation_frame": "^0.0.4"
   },
   "dependencies": {
-    "color": "git://github.com/nathanfaucett/color.git",
-    "enums": "git://github.com/nathanfaucett/enums.git",
-    "environment": "git://github.com/nathanfaucett/environment.git",
-    "event_emitter": "git://github.com/nathanfaucett/event_emitter.git",
-    "event_listener": "git://github.com/nathanfaucett/event_listener.git",
-    "fast_hash": "git://github.com/nathanfaucett/fast_hash.git",
-    "inherits": "git://github.com/nathanfaucett/inherits.git",
-    "is_array": "git://github.com/nathanfaucett/is_array.git",
-    "is_null_or_undefined": "git://github.com/nathanfaucett/is_null_or_undefined.git",
-    "mat2": "git://github.com/nathanfaucett/mat2.git",
-    "mat3": "git://github.com/nathanfaucett/mat3.git",
-    "mat4": "git://github.com/nathanfaucett/mat4.git",
-    "mathf": "git://github.com/nathanfaucett/mathf.git",
-    "object-reverse": "git://github.com/nathanfaucett/object-reverse.git",
-    "vec2": "git://github.com/nathanfaucett/vec2.git",
-    "vec3": "git://github.com/nathanfaucett/vec3.git",
-    "vec4": "git://github.com/nathanfaucett/vec4.git"
+    "@nathanfaucett/color": "^0.0.2",
+    "@nathanfaucett/enums": "^0.0.2",
+    "@nathanfaucett/environment": "^0.0.2",
+    "@nathanfaucett/event_emitter": "^0.0.3",
+    "@nathanfaucett/event_listener": "^0.0.2",
+    "@nathanfaucett/fast_hash": "^0.0.2",
+    "@nathanfaucett/inherits": "^0.0.3",
+    "@nathanfaucett/is_array": "^0.0.1",
+    "@nathanfaucett/is_null_or_undefined": "^0.0.1",
+    "@nathanfaucett/mat2": "^0.0.2",
+    "@nathanfaucett/mat3": "^0.0.2",
+    "@nathanfaucett/mat4": "^0.0.2",
+    "@nathanfaucett/mathf": "^0.0.3",
+    "@nathanfaucett/object-reverse": "^0.0.1",
+    "@nathanfaucett/vec2": "^0.0.2",
+    "@nathanfaucett/vec3": "^0.0.2",
+    "@nathanfaucett/vec4": "^0.0.2"
   }
 }

@@ -1,4 +1,4 @@
-var objectReverse = require("object-reverse");
+var objectReverse = require("@nathanfaucett/object-reverse");
 
 
 var enums = exports;

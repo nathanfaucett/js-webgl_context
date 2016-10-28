@@ -1,4 +1,4 @@
-var enums = require("enums");
+var enums = require("@nathanfaucett/enums");
 
 
 module.exports = enums({

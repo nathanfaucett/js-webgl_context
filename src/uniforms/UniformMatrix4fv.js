@@ -1,4 +1,4 @@
-var mat4 = require("mat4"),
+var mat4 = require("@nathanfaucett/mat4"),
     Uniform = require("./Uniform");
 
 

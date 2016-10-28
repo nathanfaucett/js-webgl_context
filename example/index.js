@@ -1,5 +1,5 @@
-var mat4 = require("mat4"),
-    requestAnimationFrame = require("request_animation_frame"),
+var mat4 = require("@nathanfaucett/mat4"),
+    requestAnimationFrame = require("@nathanfaucett/request_animation_frame"),
     WebGLContext = require("..")
     filterMode = require("../src/enums/filterMode");
 
@@ -209,17 +209,17 @@ function render(ms) {
     color[0] = Math.sin(ms * 0.00001);
     color[1] = Math.cos(ms * 0.0001);
     color[2] = Math.sin(ms * 0.001);
-    
+
     context.setFrameBuffer(framebuffer);
-    
+
     context.setClearColor(color);
     context.clearCanvas();
-    
+
     renderBox(ms);
     renderTriangle(ms);
-    
+
     context.clearFrameBuffer();
-    
+
     context.setProgram(programFrameBuffer);
     programFrameBuffer.attributes.get("position").set(buffer, 0);
     programFrameBuffer.attributes.get("uv").set(buffer, 12);

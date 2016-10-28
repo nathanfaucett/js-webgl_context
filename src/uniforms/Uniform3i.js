@@ -1,4 +1,4 @@
-var vec3 = require("vec3"),
+var vec3 = require("@nathanfaucett/vec3"),
     Uniform = require("./Uniform");
 
 

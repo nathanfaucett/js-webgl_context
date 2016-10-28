@@ -1,12 +1,12 @@
-var mathf = require("mathf"),
+var mathf = require("@nathanfaucett/mathf"),
 
-    isNull = require("is_null"),
-    isNullOrUndefined = require("is_null_or_undefined"),
+    isNull = require("@nathanfaucett/is_null"),
+    isNullOrUndefined = require("@nathanfaucett/is_null_or_undefined"),
 
-    environment = require("environment"),
-    EventEmitter = require("event_emitter"),
-    eventListener = require("event_listener"),
-    color = require("color"),
+    environment = require("@nathanfaucett/environment"),
+    EventEmitter = require("@nathanfaucett/event_emitter"),
+    eventListener = require("@nathanfaucett/event_listener"),
+    color = require("@nathanfaucett/color"),
 
     enums = require("./enums"),
     WebGLBuffer = require("./WebGLBuffer"),

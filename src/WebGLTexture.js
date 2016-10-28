@@ -1,6 +1,6 @@
-var isArray = require("is_array"),
-    isNullOrUndefined = require("is_null_or_undefined"),
-    mathf = require("mathf"),
+var isArray = require("@nathanfaucett/is_array"),
+    isNullOrUndefined = require("@nathanfaucett/is_null_or_undefined"),
+    mathf = require("@nathanfaucett/mathf"),
     enums = require("./enums/index");
 
 
