@@ -40,7 +40,7 @@
     "@nathanfaucett/is_null_or_undefined": "^0.0.1",
     "@nathanfaucett/mat2": "^0.0.2",
     "@nathanfaucett/mat3": "^0.0.2",
-    "@nathanfaucett/mat4": "^0.0.2",
+    "@nathanfaucett/mat4": "^0.0.3",
     "@nathanfaucett/mathf": "^0.0.3",
     "@nathanfaucett/object-reverse": "^0.0.1",
     "@nathanfaucett/vec2": "^0.0.2",
