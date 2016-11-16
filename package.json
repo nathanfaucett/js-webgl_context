@@ -38,13 +38,13 @@
     "@nathanfaucett/inherits": "^0.0.3",
     "@nathanfaucett/is_array": "^0.0.1",
     "@nathanfaucett/is_null_or_undefined": "^0.0.1",
-    "@nathanfaucett/mat2": "^0.0.2",
-    "@nathanfaucett/mat3": "^0.0.2",
-    "@nathanfaucett/mat4": "^0.0.4",
+    "@nathanfaucett/mat2": "^0.0.3",
+    "@nathanfaucett/mat3": "^0.0.3",
+    "@nathanfaucett/mat4": "^0.0.5",
     "@nathanfaucett/mathf": "^0.0.3",
     "@nathanfaucett/object-reverse": "^0.0.1",
-    "@nathanfaucett/vec2": "^0.0.2",
-    "@nathanfaucett/vec3": "^0.0.2",
-    "@nathanfaucett/vec4": "^0.0.2"
+    "@nathanfaucett/vec2": "^0.0.3",
+    "@nathanfaucett/vec3": "^0.0.3",
+    "@nathanfaucett/vec4": "^0.0.3"
   }
 }
