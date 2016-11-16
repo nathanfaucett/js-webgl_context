@@ -23,7 +23,7 @@ UniformMatrix4fv.prototype.set = function(value, force) {
     var context = this.context;
 
     if (this.size === 1) {
-        if (force || context.__programForce || mat4.notEqual(this.value, value)) {
+        if (force || context.__programForce || mat4.notEquals(this.value, value)) {
             context.gl.uniformMatrix4fv(this.location, false, value);
             mat4.copy(this.value, value);
         }
