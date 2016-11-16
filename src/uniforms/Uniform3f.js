@@ -18,7 +18,7 @@ Uniform3f.prototype.set = function(value, force) {
     var context = this.context;
 
     if (this.size === 1) {
-        if (force || context.__programForce || vec3.notEqual(this.value, value)) {
+        if (force || context.__programForce || vec3.notEquals(this.value, value)) {
             context.gl.uniform3f(this.location, value[0], value[1], value[2]);
             vec3.copy(this.value, value);
         }

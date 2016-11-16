@@ -648,7 +648,7 @@ WebGLContextPrototype.setBlending = function(value) {
 WebGLContextPrototype.setClearColor = function(clearColor, alpha) {
     alpha = alpha || 1;
 
-    if (color.notEqual(this.__clearColor, clearColor) || alpha !== this.__clearAlpha) {
+    if (color.notEquals(this.__clearColor, clearColor) || alpha !== this.__clearAlpha) {
 
         color.copy(this.__clearColor, clearColor);
         this.__clearAlpha = alpha;

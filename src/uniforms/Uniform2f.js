@@ -18,7 +18,7 @@ Uniform2f.prototype.set = function(value, force) {
     var context = this.context;
 
     if (this.size === 1) {
-        if (force || context.__programForce || vec2.notEqual(this.value, value)) {
+        if (force || context.__programForce || vec2.notEquals(this.value, value)) {
             context.gl.uniform2f(this.location, value[0], value[1]);
             vec2.copy(this.value, value);
         }

@@ -29,7 +29,7 @@
     "@nathanfaucett/request_animation_frame": "^0.0.4"
   },
   "dependencies": {
-    "@nathanfaucett/color": "^0.0.2",
+    "@nathanfaucett/color": "^0.0.4",
     "@nathanfaucett/enums": "^0.0.2",
     "@nathanfaucett/environment": "^0.0.2",
     "@nathanfaucett/event_emitter": "^0.0.3",
